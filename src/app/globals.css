@@ -1,0 +1,819 @@
+@import "tailwindcss";
+
+/*
+ * Briefnest design system.
+ *
+ * The palette and type come from the product, not from a template:
+ *   · charcoal stage, mint labels and thread from the launch film (marketing/briefnest-product-video)
+ *   · indigo-to-violet lighting from the Aurora app icon (scripts/make-icon.swift)
+ *   · teal from the app's accent, so interface chrome and screenshots read as one product
+ * Tokens declared in @theme become Tailwind utilities (bg-ink-900, text-fog, font-mono …).
+ */
+/*
+ * Fallback faces, measured against the real fonts at the sizes they are used, so a headline keeps the same
+ * line breaks when the web font arrives on a slow connection (no layout shift).
+ *
+ *   Inter narrows as it grows (its optical-size axis). At headline sizes it sets as wide as regular Arial;
+ *   at lead-paragraph size about 3.6% wider. The single fallback next/font generates is sized for small body
+ *   text, and at headline sizes came out 7% too wide in Chrome and 16% in Safari.
+ *   EB Garamond Italic sets 8% narrower than Times New Roman Italic.
+ *   JetBrains Mono shares its advance width with the system monospace fonts, so those stand in unadjusted.
+ *
+ * `font-weight: 100 900` tells the browser the face covers every weight, so it never fakes a bold.
+ */
+@font-face {
+  font-family: "Inter Display Fallback";
+  src: local("Arial");
+  font-weight: 100 900;
+  size-adjust: 100%;
+  ascent-override: 96.88%;
+  descent-override: 24.12%;
+  line-gap-override: 0%;
+}
+/* Lead paragraphs run from about 17 px on a phone to 21 px on a desktop, and Inter's width changes across
+   that range, so there is one fallback for each end. */
+@font-face {
+  font-family: "Inter Lead Fallback";
+  src: local("Arial");
+  font-weight: 100 900;
+  size-adjust: 103.3%;
+  ascent-override: 93.8%;
+  descent-override: 23.3%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Lead Fallback Small";
+  src: local("Arial");
+  font-weight: 100 900;
+  size-adjust: 104.7%;
+  ascent-override: 92.5%;
+  descent-override: 23%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Garamond Italic Fallback";
+  src: local("Times New Roman Italic"), local("TimesNewRomanPS-ItalicMT");
+  font-style: italic;
+  font-weight: 100 900;
+  size-adjust: 91.8%;
+  ascent-override: 109.7%;
+  descent-override: 32.5%;
+  line-gap-override: 0%;
+}
+
+@theme {
+  /* Type */
+  --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--face-sans, "Inter"), "Inter Display Fallback", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-lead: var(--face-sans, "Inter"), "Inter Lead Fallback", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: var(--face-serif, "EB Garamond"), "Garamond Italic Fallback", Georgia, "Times New Roman", serif;
+  --font-mono: var(--face-mono, "JetBrains Mono"), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Stage: near-black charcoal. 900 is the film's background. */
+  --color-ink-950: #05070b;
+  --color-ink-900: #0b1017;
+  --color-ink-850: #0e141c;
+  --color-ink-800: #121922;
+  --color-ink-700: #17202a;
+  --color-ink-600: #1f2a35;
+  --color-ink-500: #2a3642;
+
+  /* Text. Contrast on ink-900: paper 17:1, fog 11.6:1, mist 7:1, dim 5.9:1 (4.9:1 on a raised surface). */
+  --color-paper: #f2f2ed;
+  --color-fog: #c5ced1;
+  --color-mist: #96a3ab;
+  --color-dim: #84919b;
+
+  /* Teal: the film's mint for editorial accents, a calmer cut of the app's accent for controls. */
+  --color-mint: #b6e4d8;
+  --color-label: #b6d7d0;
+  --color-thread: #84cdb7;
+  --color-teal-300: #8ee3dc;
+  --color-teal-400: #5ad2cc;
+  --color-teal-500: #2fb9b7;
+
+  /* Aurora, from the app icon. */
+  --color-indigo: #3d63ff;
+  --color-iris: #7c8cff;
+  --color-violet: #9b4dff;
+  --color-orchid: #c27bff;
+  --color-aurora-deep: #10123a;
+
+  /* The app's own semantic colours, sampled from its dark-mode views. Used only where the page mirrors app states. */
+  --color-app-window: #323232;
+  --color-app-sidebar: #282828;
+  --color-app-field: #1e1e1e;
+  --color-app-teal: #00d2e0;
+  --color-app-green: #2cd057;
+  --color-app-orange: #fe912d;
+  --color-app-purple: #db34f2;
+
+  /* Shape and motion */
+  --radius-plate: 0.875rem;
+  --radius-card: 1.125rem;
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Provenance labels are tiny on a phone; the system monospace (SF Mono on Apple devices) does the job there
+   and saves a font download. The custom property is only used, and so the file only fetched, above 640 px. */
+@media (max-width: 639px) {
+  :root {
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --font-lead: var(--face-sans, "Inter"), "Inter Lead Fallback Small", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+}
+
+:root {
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.14);
+  --gutter: clamp(1.25rem, 4.2vw, 3rem);
+  --container: 78rem;
+  --header-h: 4rem;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    background: var(--color-ink-900);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Every font here is variable or has the cut it needs; a faked bold only makes fallback text wider. */
+    font-synthesis-weight: none;
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-ink-900);
+    color: var(--color-fog);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    font-feature-settings: "calt", "kern", "ss03";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-paper);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: rgb(90 210 204 / 0.28);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-teal-300);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* Anchors land below the sticky header. */
+  [id] {
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  /* Native captions, kept quiet and legible over the film. */
+  video::cue {
+    background: rgb(5 7 11 / 0.82);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-size: 0.95em;
+    line-height: 1.35;
+  }
+}
+
+@layer components {
+  /* Layout */
+  .container-page {
+    width: 100%;
+    max-width: calc(var(--container) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .container-wide {
+    width: 100%;
+    max-width: calc(90rem + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .section {
+    position: relative;
+    padding-block: clamp(4.5rem, 3rem + 7vw, 9.5rem);
+  }
+
+  /* Type scale. Headlines follow the film: tight grotesque, with <em> as the Garamond turn. */
+  .t-display,
+  .t-h2,
+  .t-h3 {
+    font-family: var(--font-display);
+  }
+  .t-display {
+    font-size: clamp(2.6rem, 1.1rem + 6.6vw, 5.9rem);
+    line-height: 0.98;
+    letter-spacing: -0.048em;
+    font-weight: 540;
+  }
+  .t-h2 {
+    font-size: clamp(2.05rem, 1.25rem + 3.5vw, 3.9rem);
+    line-height: 1.02;
+    letter-spacing: -0.043em;
+    font-weight: 540;
+  }
+  .t-h3 {
+    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.7rem);
+    line-height: 1.16;
+    letter-spacing: -0.028em;
+    font-weight: 560;
+  }
+  .t-h4 {
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    letter-spacing: -0.014em;
+    font-weight: 600;
+  }
+  .t-lead {
+    font-family: var(--font-lead);
+    font-size: clamp(1.075rem, 0.96rem + 0.55vw, 1.34rem);
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+    color: var(--color-fog);
+  }
+  .t-small {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  .t-display em,
+  .t-h2 em,
+  .t-h3 em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    /* Garamond's x-height is smaller than the grotesque's; lift it so the two sit on one optical size. */
+    font-size: 1.09em;
+    color: var(--color-mint);
+  }
+
+  /* Provenance label: mono, with the film's leading rule. */
+  .t-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.4;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-label);
+  }
+  .t-eyebrow::before {
+    content: "";
+    width: 1.6rem;
+    height: 1px;
+    background: var(--color-thread);
+    flex: none;
+  }
+  .t-eyebrow.is-plain::before {
+    display: none;
+  }
+  .t-mono {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Buttons. 44 px tall by default so they are comfortable touch targets. */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 2.75rem;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 560;
+    letter-spacing: -0.012em;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 180ms var(--ease-out-quint),
+      border-color 180ms var(--ease-out-quint),
+      color 180ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
+  }
+  .btn:active {
+    transform: scale(0.975);
+  }
+  .btn-sm {
+    min-height: 2.375rem;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+  }
+  .btn-lg {
+    min-height: 3.125rem;
+    padding: 0 1.6rem;
+    font-size: 1rem;
+  }
+  .btn-primary {
+    background: var(--color-paper);
+    color: var(--color-ink-950);
+  }
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow:
+      0 0 0 4px rgb(90 210 204 / 0.16),
+      0 10px 30px -10px rgb(90 210 204 / 0.45);
+  }
+  .btn-secondary {
+    background: rgb(255 255 255 / 0.055);
+    color: var(--color-paper);
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    backdrop-filter: blur(10px);
+  }
+  .btn-secondary:hover {
+    background: rgb(255 255 255 / 0.1);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.24);
+  }
+  .btn-ghost {
+    color: var(--color-fog);
+    padding-inline: 0.85rem;
+  }
+  .btn-ghost:hover {
+    color: var(--color-paper);
+    background: rgb(255 255 255 / 0.06);
+  }
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* Text link with a thread underline. */
+  .link {
+    color: var(--color-teal-300);
+    text-decoration: underline;
+    text-decoration-color: rgb(142 227 220 / 0.35);
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+  .link:hover {
+    color: var(--color-mint);
+    text-decoration-color: currentColor;
+  }
+
+  /* Product plate: a screenshot on the stage, as in the film. */
+  .plate {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--radius-plate);
+    background: var(--color-app-window);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.1),
+      0 2px 6px rgb(0 0 0 / 0.35),
+      0 34px 80px -28px rgb(0 0 0 / 0.85);
+  }
+  .plate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.09);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Fit a plate inside a size-container stage, keeping the screenshot's own proportions. */
+  .contained-plate {
+    --r: var(--ratio);
+    width: min(100cqw, calc(100cqh * var(--r)));
+    aspect-ratio: var(--r);
+  }
+  @media (max-width: 639px) {
+    .contained-plate {
+      --r: var(--ratio-small, var(--ratio));
+    }
+  }
+
+  /* Quiet surface for copy blocks and lists. */
+  .surface {
+    border-radius: var(--radius-card);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.018));
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  /* Small status pill, after the app's capsule pills. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 560;
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+    white-space: nowrap;
+    background: rgb(255 255 255 / 0.06);
+    color: var(--color-fog);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  /* Long-form pages (privacy, terms, changelog). */
+  .prose-brief {
+    max-width: 44rem;
+  }
+  .prose-brief h2 {
+    margin-top: 3.25rem;
+    margin-bottom: 0.9rem;
+    font-size: clamp(1.45rem, 1.2rem + 1vw, 1.9rem);
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+    font-weight: 560;
+  }
+  .prose-brief h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.125rem;
+    letter-spacing: -0.018em;
+    font-weight: 600;
+  }
+  .prose-brief p,
+  .prose-brief li {
+    color: var(--color-fog);
+  }
+  .prose-brief p + p {
+    margin-top: 1rem;
+  }
+  .prose-brief ul {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.55rem;
+    padding-left: 1.15rem;
+    list-style: none;
+  }
+  .prose-brief ul > li {
+    position: relative;
+  }
+  .prose-brief ul > li::before {
+    content: "";
+    position: absolute;
+    left: -1.05rem;
+    top: 0.72em;
+    width: 0.45rem;
+    height: 1px;
+    background: var(--color-thread);
+  }
+  .prose-brief strong {
+    color: var(--color-paper);
+    font-weight: 600;
+  }
+  .prose-brief code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    padding: 0.12em 0.4em;
+    border-radius: 0.35em;
+    background: rgb(255 255 255 / 0.07);
+    color: var(--color-paper);
+    overflow-wrap: anywhere;
+  }
+}
+
+@layer utilities {
+  /* Aurora lighting. Two restrained washes taken from the icon's glow colours; used on the hero and the close. */
+  .aurora {
+    background:
+      radial-gradient(60% 55% at 18% 0%, rgb(61 99 255 / 0.2), transparent 70%),
+      radial-gradient(48% 50% at 88% 12%, rgb(155 77 255 / 0.17), transparent 72%);
+  }
+  .aurora-low {
+    background:
+      radial-gradient(55% 60% at 50% 100%, rgb(124 140 255 / 0.16), transparent 70%),
+      radial-gradient(40% 45% at 12% 90%, rgb(47 185 183 / 0.1), transparent 70%);
+  }
+
+  /* Film grain: one small generated tile, fixed behind the content. Hides banding in the dark gradients. */
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+  .mask-fade-y {
+    mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------------------
+ * Dialogs (film, mobile menu). Native <dialog>: the browser traps focus, restores it and handles Escape.
+ * --------------------------------------------------------------------------------------------------------- */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+dialog.film-dialog,
+dialog.menu-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    opacity 280ms var(--ease-out-quint),
+    overlay 280ms allow-discrete,
+    display 280ms allow-discrete;
+}
+dialog.film-dialog[open],
+dialog.menu-dialog[open] {
+  opacity: 1;
+}
+@starting-style {
+  dialog.film-dialog[open],
+  dialog.menu-dialog[open] {
+    opacity: 0;
+  }
+}
+dialog.film-dialog::backdrop,
+dialog.menu-dialog::backdrop {
+  background: rgb(3 5 9 / 0);
+  transition:
+    background-color 280ms ease,
+    backdrop-filter 280ms ease,
+    overlay 280ms allow-discrete,
+    display 280ms allow-discrete;
+}
+dialog.film-dialog[open]::backdrop {
+  background: rgb(3 5 9 / 0.88);
+  backdrop-filter: blur(14px) saturate(120%);
+}
+dialog.menu-dialog[open]::backdrop {
+  background: rgb(3 5 9 / 0.6);
+}
+@starting-style {
+  dialog.film-dialog[open]::backdrop,
+  dialog.menu-dialog[open]::backdrop {
+    background: rgb(3 5 9 / 0);
+  }
+}
+
+dialog.film-dialog[open] {
+  display: grid;
+  place-items: center;
+  padding: max(0.75rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom))
+    max(0.75rem, env(safe-area-inset-left));
+}
+.film-dialog-panel {
+  /* As wide as the viewport allows while the whole 16:9 frame, its title row and margins fit the height. */
+  width: min(100%, 86rem, calc((100dvh - 7.5rem) * 16 / 9));
+  transform: translateY(0) scale(1);
+  transition: transform 420ms var(--ease-out-quint);
+}
+@starting-style {
+  dialog.film-dialog[open] .film-dialog-panel {
+    transform: translateY(14px) scale(0.975);
+  }
+}
+
+/* The player fills the screen when it goes full screen. */
+.film-player:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+/* Range inputs in the player: an invisible native slider over a drawn track, so keyboard and touch just work. */
+.film-range {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 1.25rem;
+  margin: 0;
+}
+.film-range::-webkit-slider-runnable-track {
+  height: 1.25rem;
+  background: transparent;
+}
+.film-range::-moz-range-track {
+  height: 1.25rem;
+  background: transparent;
+}
+.film-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-top: 0.225rem;
+  border-radius: 999px;
+  background: var(--color-paper);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.6);
+  transform: scale(0);
+  transition: transform 160ms var(--ease-out-quint);
+}
+.film-range::-moz-range-thumb {
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-paper);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.6);
+  transform: scale(0);
+  transition: transform 160ms var(--ease-out-quint);
+}
+.film-seek:hover .film-range::-webkit-slider-thumb,
+.film-range:focus-visible::-webkit-slider-thumb,
+.film-volume::-webkit-slider-thumb {
+  transform: scale(1);
+}
+.film-seek:hover .film-range::-moz-range-thumb,
+.film-range:focus-visible::-moz-range-thumb,
+.film-volume::-moz-range-thumb {
+  transform: scale(1);
+}
+.film-volume {
+  height: 1.25rem;
+  background: linear-gradient(to right, var(--color-paper) var(--fill, 100%), rgb(255 255 255 / 0.22) var(--fill, 100%)) center / 100% 3px no-repeat;
+}
+
+/* ---------------------------------------------------------------------------------------------------------
+ * Header. Glass by default; where scroll-driven animations exist it starts clear and turns to glass over the
+ * first 120 px of scrolling, with no script.
+ * --------------------------------------------------------------------------------------------------------- */
+.site-header {
+  background-color: rgb(11 16 23 / 0.78);
+  border-color: var(--line);
+  backdrop-filter: saturate(160%) blur(18px);
+}
+@supports (animation-timeline: scroll()) {
+  @keyframes header-glass {
+    from {
+      background-color: rgb(11 16 23 / 0);
+      border-color: rgb(255 255 255 / 0);
+      backdrop-filter: saturate(100%) blur(0);
+    }
+  }
+  .site-header {
+    animation: header-glass linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 120px;
+  }
+}
+
+/* Mobile menu sheet: drops in from the top; its rows follow in order. */
+.menu-sheet {
+  transform: translateY(0);
+  transition: transform 420ms var(--ease-out-quint);
+}
+@starting-style {
+  dialog.menu-dialog[open] .menu-sheet {
+    transform: translateY(-16px);
+  }
+}
+dialog.menu-dialog[open] .menu-item {
+  animation: rise 520ms var(--ease-out-quint) both;
+  animation-delay: calc(80ms + var(--i, 0) * 45ms);
+}
+
+/* ---------------------------------------------------------------------------------------------------------
+ * FAQ. Native <details>; where the browser can animate to `auto`, answers open and close smoothly.
+ * Elsewhere they simply appear.
+ * --------------------------------------------------------------------------------------------------------- */
+:root {
+  interpolate-size: allow-keywords;
+}
+.faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  opacity: 0;
+  transition:
+    block-size 420ms var(--ease-out-quint),
+    opacity 300ms ease,
+    content-visibility 420ms allow-discrete;
+}
+.faq[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------------------------------------
+ * Hero entrance. CSS only, so it runs with the first paint and never waits for JavaScript.
+ * --------------------------------------------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes rise-solid {
+  from {
+    transform: translateY(18px);
+  }
+}
+@keyframes settle {
+  from {
+    transform: translateY(36px) scale(0.975);
+  }
+}
+.rise {
+  animation: rise 800ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+/* Headlines and lead copy move into place but are never transparent: the main text is readable, and counts
+   as painted, from the first frame. */
+.rise-solid {
+  animation: rise-solid 800ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* Scroll reveals. Content is visible by default; RevealController adds .reveal-wait only to what starts
+   below the fold, and removing it plays this transition. */
+.reveal {
+  transition:
+    opacity 750ms var(--ease-out-quint) var(--reveal-delay, 0s),
+    transform 750ms var(--ease-out-quint) var(--reveal-delay, 0s);
+}
+.reveal.reveal-wait {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 20px));
+  transition: none;
+}
+/* The film frame holds the largest image on the page, so it moves into place without ever being transparent. */
+.settle {
+  animation: settle 1100ms var(--ease-out-quint) both;
+}
+
+/* The field drifts very slowly behind the hero and the close. */
+@keyframes drift {
+  from {
+    transform: translate3d(-1.5%, 0, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(1.5%, -1%, 0) scale(1.08);
+  }
+}
+.drift {
+  animation: drift 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* People who ask for less motion get the content without the choreography. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

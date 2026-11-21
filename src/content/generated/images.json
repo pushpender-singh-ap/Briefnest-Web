@@ -1,0 +1,486 @@
+{
+  "actions-detail": {
+    "base": "/img/actions-detail.f4cddac08f",
+    "width": 1378,
+    "height": 900,
+    "widths": [
+      480,
+      640,
+      960,
+      1280
+    ]
+  },
+  "agents": {
+    "base": "/img/agents.717172fd05",
+    "width": 1280,
+    "height": 1004,
+    "widths": [
+      480,
+      640,
+      960,
+      1280
+    ]
+  },
+  "applied": {
+    "base": "/img/applied.6fa2c747bc",
+    "width": 1192,
+    "height": 330,
+    "widths": [
+      480,
+      640,
+      960,
+      1192
+    ]
+  },
+  "chat": {
+    "base": "/img/chat.9ce17c9ba6",
+    "width": 1580,
+    "height": 980,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1580
+    ]
+  },
+  "editor": {
+    "base": "/img/editor.b299782c94",
+    "width": 1420,
+    "height": 860,
+    "widths": [
+      480,
+      640,
+      960,
+      1280
+    ]
+  },
+  "field": {
+    "base": "/img/field.1f150adb8f",
+    "width": 2400,
+    "height": 1600,
+    "widths": [
+      768,
+      1280,
+      1920,
+      2400
+    ]
+  },
+  "film-poster": {
+    "base": "/img/film-poster.830958efcf",
+    "width": 3840,
+    "height": 2160,
+    "widths": [
+      640,
+      960,
+      1280,
+      1600,
+      1920
+    ]
+  },
+  "history": {
+    "base": "/img/history.3eb3a14871",
+    "width": 1080,
+    "height": 390,
+    "widths": [
+      480,
+      640,
+      960,
+      1080
+    ]
+  },
+  "icon": {
+    "base": "/img/icon.ec43f140f5",
+    "width": 1024,
+    "height": 1024,
+    "widths": [
+      64,
+      96,
+      128,
+      192,
+      256,
+      384,
+      512
+    ]
+  },
+  "m-actions": {
+    "base": "/img/m-actions.b227f8a3fe",
+    "width": 1090,
+    "height": 950,
+    "widths": [
+      480,
+      640,
+      960,
+      1090
+    ]
+  },
+  "m-all-workspaces": {
+    "base": "/img/m-all-workspaces.bfc423f5c1",
+    "width": 940,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      940
+    ]
+  },
+  "m-chat": {
+    "base": "/img/m-chat.23b90119c2",
+    "width": 940,
+    "height": 1120,
+    "widths": [
+      480,
+      640,
+      940
+    ]
+  },
+  "m-code": {
+    "base": "/img/m-code.b42694dd03",
+    "width": 700,
+    "height": 420,
+    "widths": [
+      480,
+      640
+    ]
+  },
+  "m-decisions": {
+    "base": "/img/m-decisions.2ac43ca92b",
+    "width": 1170,
+    "height": 800,
+    "widths": [
+      480,
+      640,
+      960,
+      1170
+    ]
+  },
+  "m-home": {
+    "base": "/img/m-home.19190901ce",
+    "width": 940,
+    "height": 940,
+    "widths": [
+      480,
+      640,
+      940
+    ]
+  },
+  "m-notes": {
+    "base": "/img/m-notes.7390e51c6b",
+    "width": 940,
+    "height": 1200,
+    "widths": [
+      480,
+      640,
+      940
+    ]
+  },
+  "m-review": {
+    "base": "/img/m-review.6370c3a8b8",
+    "width": 940,
+    "height": 1280,
+    "widths": [
+      480,
+      640,
+      940
+    ]
+  },
+  "m-transcript": {
+    "base": "/img/m-transcript.6b568077f5",
+    "width": 940,
+    "height": 860,
+    "widths": [
+      480,
+      640,
+      940
+    ]
+  },
+  "menubar": {
+    "base": "/img/menubar.313099fc64",
+    "width": 752,
+    "height": 840,
+    "widths": [
+      480,
+      640,
+      752
+    ]
+  },
+  "notes": {
+    "base": "/img/notes.841d3222de",
+    "width": 1520,
+    "height": 1180,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1520
+    ]
+  },
+  "proposal": {
+    "base": "/img/proposal.63f15d477c",
+    "width": 1192,
+    "height": 330,
+    "widths": [
+      480,
+      640,
+      960,
+      1192
+    ]
+  },
+  "questions": {
+    "base": "/img/questions.3c0a2a4fdb",
+    "width": 2000,
+    "height": 770,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920
+    ]
+  },
+  "repository": {
+    "base": "/img/repository.fb9d0cd562",
+    "width": 1840,
+    "height": 740,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1840
+    ]
+  },
+  "screen": {
+    "base": "/img/screen.3759eb9141",
+    "width": 1060,
+    "height": 740,
+    "widths": [
+      480,
+      640,
+      960
+    ]
+  },
+  "search": {
+    "base": "/img/search.68e6ee5e3b",
+    "width": 1280,
+    "height": 720,
+    "widths": [
+      480,
+      640,
+      960,
+      1280
+    ]
+  },
+  "setup": {
+    "base": "/img/setup.305f533ce1",
+    "width": 1160,
+    "height": 612,
+    "widths": [
+      480,
+      640,
+      960,
+      1160
+    ]
+  },
+  "sharing": {
+    "base": "/img/sharing.d9c0713cd5",
+    "width": 1264,
+    "height": 660,
+    "widths": [
+      480,
+      640,
+      960,
+      1264
+    ]
+  },
+  "team": {
+    "base": "/img/team.22f177c3e1",
+    "width": 1280,
+    "height": 380,
+    "widths": [
+      480,
+      640,
+      960,
+      1280
+    ]
+  },
+  "transcript": {
+    "base": "/img/transcript.da1c31c899",
+    "width": 1480,
+    "height": 760,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1480
+    ]
+  },
+  "v1-detail": {
+    "base": "/img/v1-detail.197df73b14",
+    "width": 1478,
+    "height": 872,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1478
+    ]
+  },
+  "v2-detail": {
+    "base": "/img/v2-detail.5870875550",
+    "width": 1478,
+    "height": 912,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1478
+    ]
+  },
+  "win-actions": {
+    "base": "/img/win-actions.3dd0a27ef9",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-all-workspaces": {
+    "base": "/img/win-all-workspaces.f7da2382d0",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-chat": {
+    "base": "/img/win-chat.276ea659d4",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-code": {
+    "base": "/img/win-code.1a0ba69a72",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-decisions": {
+    "base": "/img/win-decisions.13717795fc",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-home": {
+    "base": "/img/win-home.7e7b94037a",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-meeting-draft": {
+    "base": "/img/win-meeting-draft.d7ca1d3992",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-meeting-summary": {
+    "base": "/img/win-meeting-summary.1ee682b470",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-meeting-transcript": {
+    "base": "/img/win-meeting-transcript.6014a63945",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  },
+  "win-review": {
+    "base": "/img/win-review.1853734328",
+    "width": 2360,
+    "height": 1520,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2360
+    ]
+  }
+}
