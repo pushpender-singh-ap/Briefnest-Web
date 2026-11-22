@@ -21,7 +21,7 @@ export interface FeatureChapter {
 export const featuresIntro = {
   eyebrow: "Features",
   headline: { lead: "Everything Briefnest does,", turn: "in detail." } satisfies Headline,
-  lead: "From the first minute of a call to the question someone asks six months later. Every screen below is the real app showing the sample Sentio project.",
+  lead: "From the first minute of a call to the question someone asks six months later. Every screen below is the real app showing the sample Inknest project.",
 };
 
 export const chapters: FeatureChapter[] = [
@@ -130,7 +130,7 @@ export const chapters: FeatureChapter[] = [
       { title: "Two separate switches", text: "Let agents read Briefnest, and, separately, let agents update work items. Both are off by default, and every agent update is logged with the agent’s name." },
     ],
     shots: [
-      { image: "win-code", small: "m-code", alt: "The Code page for Sentio with the payments repository and merged pull request #42, Implement retry backoff.", caption: "Code", window: true },
+      { image: "win-code", small: "m-code", alt: "The Code page for Inknest with the payments repository and merged pull request #42, Implement retry backoff.", caption: "Code", window: true },
       { image: "agents", alt: "The Connect agents sheet with switches for reading and updating, and a list of supported clients.", caption: "Settings / Connect agents" },
     ],
     note: "AI features need Node.js 22 or later and a separately installed agent or model. Whatever an agent reads through MCP is sent to that agent’s own AI provider.",
@@ -153,7 +153,7 @@ export const chapters: FeatureChapter[] = [
       { title: "Native throughout", text: "System fonts, sheets, menus and keyboard shortcuts, light and dark mode, an accent colour and three app icons to choose from." },
     ],
     shots: [
-      { image: "sharing", alt: "The Share Sentio sheet: add a group, choose what to share, publish.", caption: "Share Workspace" },
+      { image: "sharing", alt: "The Share Inknest sheet: add a group, choose what to share, publish.", caption: "Share Workspace" },
       { image: "menubar", alt: "The Briefnest menu bar panel: Not listening, Record Now, two items under Needs you, and today’s meetings.", caption: "Menu bar" },
     ],
     note: "Sharing is Git-backed. There is no hosted Briefnest service, and content already published stays in that repository’s history.",

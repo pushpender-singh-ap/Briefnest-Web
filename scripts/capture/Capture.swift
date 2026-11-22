@@ -5,7 +5,7 @@ import BriefnestAI
 import BriefnestRepositories
 
 // Website screenshots. Compiled beside the production views in a disposable copy of the package (see capture.sh).
-// It extends marketing/briefnest-product-video/scripts/Capture.swift: the same synthetic Sentio fixture, plus
+// It extends marketing/briefnest-product-video/scripts/Capture.swift: the same synthetic Inknest fixture, plus
 // full-window renders, Review, All Workspaces, Search, the menu bar panel and the team sheet.
 // Nothing here talks to a provider, a call app or a real repository.
 
@@ -34,15 +34,15 @@ private actor NoNetwork: AIProviding {
             calendar.date(bySettingHour: hour, minute: minute, second: 0, of: now.addingTimeInterval(-Double(days) * 86400)) ?? now
         }
 
-        // Sentio: the payments team from the launch film.
-        var w = Workspace(name: "Sentio")
+        // Inknest: the payments team from the launch film.
+        var w = Workspace(name: "Inknest")
         w.team = [TeamMember(name: "Mira", role: "Product lead"), TeamMember(name: "Asha", role: "Payments engineer")]
         var connection = RepositoryConnection()
-        connection.url = "https://github.com/sentio-film-fixture/payments"
+        connection.url = "https://github.com/inknest-film-fixture/payments"
         w.repositories = [connection]
         let target = try RepositoryTarget(connection)
         let repo = try RepositoryStore(directory: root)
-        try await repo.save(.init(workspaceID: w.id, target: target, name: "Sentio / Payments", summary: "Payment processing", branch: "main", revision: "film-fixture", branches: ["main"], files: [], documents: [], warnings: [], activity: [.init(id: "pr-42", kind: .pullRequest, title: "Implement retry backoff", author: "Asha", date: Date(), state: "merged", number: 42)]))
+        try await repo.save(.init(workspaceID: w.id, target: target, name: "Inknest / Payments", summary: "Payment processing", branch: "main", revision: "film-fixture", branches: ["main"], files: [], documents: [], warnings: [], activity: [.init(id: "pr-42", kind: .pullRequest, title: "Implement retry backoff", author: "Asha", date: Date(), state: "merged", number: 42)]))
         var first = Meeting(workspaceID: w.id, title: "Payments kickoff", platform: .zoom)
         first.createdAt = daysAgo(1, hour: 14, minute: 30)
         first.segments = [.init(text: "Start with five retries while we measure recovery.", source: .meeting, startSeconds: 8, endSeconds: 14, speaker: "Asha")]

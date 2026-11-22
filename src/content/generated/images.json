@@ -1,6 +1,6 @@
 {
   "actions-detail": {
-    "base": "/img/actions-detail.f4cddac08f",
+    "base": "/img/actions-detail.53d00867fb",
     "width": 1378,
     "height": 900,
     "widths": [
@@ -33,7 +33,7 @@
     ]
   },
   "chat": {
-    "base": "/img/chat.9ce17c9ba6",
+    "base": "/img/chat.0696acd75c",
     "width": 1580,
     "height": 980,
     "widths": [
@@ -67,7 +67,7 @@
     ]
   },
   "film-poster": {
-    "base": "/img/film-poster.830958efcf",
+    "base": "/img/film-poster.023deff1d3",
     "width": 3840,
     "height": 2160,
     "widths": [
@@ -79,7 +79,7 @@
     ]
   },
   "history": {
-    "base": "/img/history.3eb3a14871",
+    "base": "/img/history.db9de45263",
     "width": 1080,
     "height": 390,
     "widths": [
@@ -104,7 +104,7 @@
     ]
   },
   "m-actions": {
-    "base": "/img/m-actions.b227f8a3fe",
+    "base": "/img/m-actions.d556e91cd0",
     "width": 1090,
     "height": 950,
     "widths": [
@@ -115,7 +115,7 @@
     ]
   },
   "m-all-workspaces": {
-    "base": "/img/m-all-workspaces.bfc423f5c1",
+    "base": "/img/m-all-workspaces.01181cdaee",
     "width": 940,
     "height": 1520,
     "widths": [
@@ -125,7 +125,7 @@
     ]
   },
   "m-chat": {
-    "base": "/img/m-chat.23b90119c2",
+    "base": "/img/m-chat.c70fabc2f6",
     "width": 940,
     "height": 1120,
     "widths": [
@@ -135,7 +135,7 @@
     ]
   },
   "m-code": {
-    "base": "/img/m-code.b42694dd03",
+    "base": "/img/m-code.e4fbafb677",
     "width": 700,
     "height": 420,
     "widths": [
@@ -144,7 +144,7 @@
     ]
   },
   "m-decisions": {
-    "base": "/img/m-decisions.2ac43ca92b",
+    "base": "/img/m-decisions.85ae42f3d9",
     "width": 1170,
     "height": 800,
     "widths": [
@@ -155,7 +155,7 @@
     ]
   },
   "m-home": {
-    "base": "/img/m-home.19190901ce",
+    "base": "/img/m-home.b142e5d301",
     "width": 940,
     "height": 940,
     "widths": [
@@ -175,7 +175,7 @@
     ]
   },
   "m-review": {
-    "base": "/img/m-review.6370c3a8b8",
+    "base": "/img/m-review.6afd43c9a5",
     "width": 940,
     "height": 1280,
     "widths": [
@@ -185,7 +185,7 @@
     ]
   },
   "m-transcript": {
-    "base": "/img/m-transcript.6b568077f5",
+    "base": "/img/m-transcript.62c10d1e5b",
     "width": 940,
     "height": 860,
     "widths": [
@@ -195,7 +195,7 @@
     ]
   },
   "menubar": {
-    "base": "/img/menubar.313099fc64",
+    "base": "/img/menubar.d79b09b50a",
     "width": 752,
     "height": 840,
     "widths": [
@@ -228,7 +228,7 @@
     ]
   },
   "questions": {
-    "base": "/img/questions.3c0a2a4fdb",
+    "base": "/img/questions.6bbd352cc8",
     "width": 2000,
     "height": 770,
     "widths": [
@@ -241,7 +241,7 @@
     ]
   },
   "repository": {
-    "base": "/img/repository.fb9d0cd562",
+    "base": "/img/repository.a861279a7b",
     "width": 1840,
     "height": 740,
     "widths": [
@@ -254,7 +254,7 @@
     ]
   },
   "screen": {
-    "base": "/img/screen.3759eb9141",
+    "base": "/img/screen.25778e12a4",
     "width": 1060,
     "height": 740,
     "widths": [
@@ -264,7 +264,7 @@
     ]
   },
   "search": {
-    "base": "/img/search.68e6ee5e3b",
+    "base": "/img/search.bb71bf350e",
     "width": 1280,
     "height": 720,
     "widths": [
@@ -286,7 +286,7 @@
     ]
   },
   "sharing": {
-    "base": "/img/sharing.d9c0713cd5",
+    "base": "/img/sharing.41adb8134f",
     "width": 1264,
     "height": 660,
     "widths": [
@@ -297,7 +297,7 @@
     ]
   },
   "team": {
-    "base": "/img/team.22f177c3e1",
+    "base": "/img/team.72766a5252",
     "width": 1280,
     "height": 380,
     "widths": [
@@ -308,7 +308,7 @@
     ]
   },
   "transcript": {
-    "base": "/img/transcript.da1c31c899",
+    "base": "/img/transcript.db8faaac5e",
     "width": 1480,
     "height": 760,
     "widths": [
@@ -320,7 +320,7 @@
     ]
   },
   "v1-detail": {
-    "base": "/img/v1-detail.197df73b14",
+    "base": "/img/v1-detail.7b1098a87d",
     "width": 1478,
     "height": 872,
     "widths": [
@@ -332,7 +332,7 @@
     ]
   },
   "v2-detail": {
-    "base": "/img/v2-detail.5870875550",
+    "base": "/img/v2-detail.8167de409a",
     "width": 1478,
     "height": 912,
     "widths": [
@@ -344,7 +344,7 @@
     ]
   },
   "win-actions": {
-    "base": "/img/win-actions.3dd0a27ef9",
+    "base": "/img/win-actions.585c7f7b57",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -358,7 +358,7 @@
     ]
   },
   "win-all-workspaces": {
-    "base": "/img/win-all-workspaces.f7da2382d0",
+    "base": "/img/win-all-workspaces.66353749f6",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -372,7 +372,7 @@
     ]
   },
   "win-chat": {
-    "base": "/img/win-chat.276ea659d4",
+    "base": "/img/win-chat.c5d1c445da",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -386,7 +386,7 @@
     ]
   },
   "win-code": {
-    "base": "/img/win-code.1a0ba69a72",
+    "base": "/img/win-code.435b72f008",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -400,7 +400,7 @@
     ]
   },
   "win-decisions": {
-    "base": "/img/win-decisions.13717795fc",
+    "base": "/img/win-decisions.c1429b40cd",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -414,7 +414,7 @@
     ]
   },
   "win-home": {
-    "base": "/img/win-home.7e7b94037a",
+    "base": "/img/win-home.51f84c2e04",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -428,7 +428,7 @@
     ]
   },
   "win-meeting-draft": {
-    "base": "/img/win-meeting-draft.d7ca1d3992",
+    "base": "/img/win-meeting-draft.a0e47162c1",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -442,7 +442,7 @@
     ]
   },
   "win-meeting-summary": {
-    "base": "/img/win-meeting-summary.1ee682b470",
+    "base": "/img/win-meeting-summary.0702b7e5e8",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -456,7 +456,7 @@
     ]
   },
   "win-meeting-transcript": {
-    "base": "/img/win-meeting-transcript.6014a63945",
+    "base": "/img/win-meeting-transcript.7caba4e411",
     "width": 2360,
     "height": 1520,
     "widths": [
@@ -470,7 +470,7 @@
     ]
   },
   "win-review": {
-    "base": "/img/win-review.1853734328",
+    "base": "/img/win-review.34a9cde4ec",
     "width": 2360,
     "height": 1520,
     "widths": [

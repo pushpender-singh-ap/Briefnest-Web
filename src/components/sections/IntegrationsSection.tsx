@@ -28,7 +28,7 @@ export function IntegrationsSection() {
 
         <div className="mt-14 grid gap-6 lg:mt-20 lg:grid-cols-[1.4fr_1fr] lg:items-stretch">
           <Reveal>
-            <Plate caption="Code / Sentio">
+            <Plate caption="Code / Inknest">
               <Picture id="repository" small={{ id: "m-code" }} alt={integrations.images.repository} sizes="(min-width: 1024px) 700px, 92vw" />
             </Plate>
           </Reveal>

@@ -3,7 +3,7 @@
  *
  * Every product statement here is checked against the Briefnest repository (README.md, docs/FEATURES.md,
  * docs/FLOWS.md, docs/audit/PRIVACY.md) and the app itself. The running example is the film's fictional
- * Sentio payments team; quoted lines match the screenshots.
+ * Inknest payments team; quoted lines match the screenshots.
  */
 import type { ImageId } from "@/lib/images";
 
@@ -110,7 +110,7 @@ export const how = {
       image: "chat",
       small: "m-chat",
       alt: "A Briefnest chat answering “Why did we change the retry limit?” with two cited sources.",
-      caption: "Chat / Sentio",
+      caption: "Chat / Inknest",
     },
   ] satisfies Step[],
 };
@@ -303,7 +303,7 @@ export const integrations = {
   },
   note: "What an agent reads goes to that agent’s AI provider. Connecting Briefnest doesn’t give any agent write access to your repositories.",
   images: {
-    repository: "The Code page for the Sentio workspace: one repository, payments, with merged pull request #42 Implement retry backoff by Asha.",
+    repository: "The Code page for the Inknest workspace: one repository, payments, with merged pull request #42 Implement retry backoff by Asha.",
     agents: "The Connect agents sheet: switches for Let agents read Briefnest and Let agents update work, and a list of clients including Claude Code, Codex, Cursor, Gemini CLI, OpenCode and VS Code.",
   },
 };
@@ -324,9 +324,9 @@ export const workspaces = {
   sharing:
     "Sharing runs on Git, not on a Briefnest server. Each group has its own repository, and access is whoever can read that repository. Anything already published stays in its Git history.",
   images: {
-    all: "The All Workspaces page: cards for Sentio, Atlas and Personal with meetings this week and open actions, plus lists of items needing attention, recent meetings and decisions to check.",
-    sharing: "The Share “Sentio” sheet with three steps: add a group, choose what to share, publish. It reads “Nothing leaves this Mac until you publish.”",
-    team: "The Team sheet for Sentio listing Mira, Product lead, and Asha, Payments engineer.",
+    all: "The All Workspaces page: cards for Inknest, Atlas and Personal with meetings this week and open actions, plus lists of items needing attention, recent meetings and decisions to check.",
+    sharing: "The Share “Inknest” sheet with three steps: add a group, choose what to share, publish. It reads “Nothing leaves this Mac until you publish.”",
+    team: "The Team sheet for Inknest listing Mira, Product lead, and Asha, Payments engineer.",
   },
 };
 
@@ -383,7 +383,7 @@ export const tour = {
   id: "tour",
   eyebrow: "Product tour",
   headline: { lead: "The whole workspace,", turn: "page by page." } satisfies Headline,
-  body: "Real Briefnest windows, showing the sample Sentio project.",
+  body: "Real Briefnest windows, showing the sample Inknest project.",
   items: [
     {
       key: "workspace",
@@ -392,7 +392,7 @@ export const tour = {
       text: "Open actions, open questions, decisions and recent meetings for one project.",
       image: "win-home",
       small: "m-home",
-      alt: "The Sentio workspace home in Briefnest: one open action, one open question, one decision, and the recent meetings Sprint Planning and Payments kickoff.",
+      alt: "The Inknest workspace home in Briefnest: one open action, one open question, one decision, and the recent meetings Sprint Planning and Payments kickoff.",
     },
     {
       key: "notes",
@@ -437,7 +437,7 @@ export const tour = {
       text: "Questions answered from the workspace, with numbered sources.",
       image: "win-chat",
       small: "m-chat",
-      alt: "A chat in the Sentio workspace answering “Why did we change the retry limit?” with two sources.",
+      alt: "A chat in the Inknest workspace answering “Why did we change the retry limit?” with two sources.",
     },
     {
       key: "code",

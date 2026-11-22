@@ -141,5 +141,5 @@ export const film = {
 
 /** The one fictional example the whole site follows, the same one the film uses. */
 export const example = {
-  note: "Sentio, its people, meetings, repository and numbers are fictional. Screenshots are the real app showing that sample data.",
+  note: "Inknest, its people, meetings, repository and numbers are fictional. Screenshots are the real app showing that sample data.",
 } as const;

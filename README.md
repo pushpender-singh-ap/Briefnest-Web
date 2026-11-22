@@ -18,7 +18,7 @@ npm run dev        # http://localhost:3000, with hot reload
 | `npm run build` | Production build into `out/`. |
 | `npm run preview` | Serves `out/` on port 3000 the way a static host would, with the production headers. |
 | `npm run lint` | ESLint. |
-| `npm run typecheck` | TypeScript, no output. |
+| `npm run typecheck` | Generates Next.js route types, then runs TypeScript with no output. |
 | `npm test` | Unit tests (Vitest). |
 | `npm run test:e2e` | Browser tests (Playwright) against `out/`. Run `npm run build` first. |
 | `npm run check` | All of the above, in order. Run this before deploying. |
@@ -102,7 +102,7 @@ The film's 15-second vertical cut is a social asset and isn't used on the site.
 
 ### Screenshots
 
-Every screenshot is the real app. `npm run captures` copies the Swift package to a temporary folder, swaps only that copy's entry point for `scripts/capture/Capture.swift`, seeds temporary stores with the same fictional Sentio project the film uses, renders the app's own SwiftUI views offscreen and exits. It doesn't touch the checkout, the installed app or its data, and nothing is sent anywhere. The captures land in `assets/captures`.
+Every screenshot is the real app. `npm run captures` copies the Swift package to a temporary folder, swaps only that copy's entry point for `scripts/capture/Capture.swift`, seeds temporary stores with the same fictional Inknest project the film uses, renders the app's own SwiftUI views offscreen and exits. It doesn't touch the checkout, the installed app or its data, and nothing is sent anywhere. The captures land in `assets/captures`.
 
 Four things on the homepage are typeset rather than captured: the scattered-to-connected diagram, the action "review step" sketch, the answer-and-sources panel, and the example exchange with a coding agent. The last three say so on the page, and each sits beside the real screen it restates. The window title bar with its three controls is drawn by the site; everything below it is the app.
 

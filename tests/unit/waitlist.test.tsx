@@ -33,7 +33,7 @@ describe("early-access form", () => {
 
   it("rejects something that isn't an email address", async () => {
     const { user, fetchMock, email, consent, submit } = setup();
-    await user.type(email, "mira at sentio");
+    await user.type(email, "mira at inknest");
     await user.click(consent);
     await user.click(submit);
     expect(screen.getByText(/doesn’t look like an email address/)).toBeVisible();
@@ -43,7 +43,7 @@ describe("early-access form", () => {
 
   it("needs explicit consent", async () => {
     const { user, fetchMock, email, consent, submit } = setup();
-    await user.type(email, "mira@sentio.example");
+    await user.type(email, "mira@inknest.example");
     await user.click(submit);
     expect(screen.getByText("Tick the box so we can email you.")).toBeVisible();
     expect(consent).toHaveFocus();
@@ -52,7 +52,7 @@ describe("early-access form", () => {
 
   it("posts the request and confirms only when the endpoint accepts it", async () => {
     const { user, fetchMock, email, consent, submit } = setup();
-    await user.type(email, "  mira@sentio.example ");
+    await user.type(email, "  mira@inknest.example ");
     await user.click(consent);
     await user.click(submit);
 
@@ -60,13 +60,13 @@ describe("early-access form", () => {
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe(ENDPOINT);
     expect(init.method).toBe("POST");
-    expect(JSON.parse(String(init.body))).toEqual({ email: "mira@sentio.example", consent: true, source: "briefnest-website" });
+    expect(JSON.parse(String(init.body))).toEqual({ email: "mira@inknest.example", consent: true, source: "briefnest-website" });
     expect(await screen.findByText("Request sent.")).toBeVisible();
   });
 
   it("says so when the endpoint refuses, and never claims success", async () => {
     const { user, email, consent, submit } = setup(new Response("nope", { status: 500 }));
-    await user.type(email, "mira@sentio.example");
+    await user.type(email, "mira@inknest.example");
     await user.click(consent);
     await user.click(submit);
     expect(await screen.findByRole("alert")).toHaveTextContent("Your request wasn’t sent. The server answered 500.");
@@ -75,7 +75,7 @@ describe("early-access form", () => {
 
   it("says so when the network fails", async () => {
     const { user, email, consent, submit } = setup(new TypeError("Failed to fetch"));
-    await user.type(email, "mira@sentio.example");
+    await user.type(email, "mira@inknest.example");
     await user.click(consent);
     await user.click(submit);
     expect(await screen.findByRole("alert")).toHaveTextContent("Your request wasn’t sent. Check your connection and try again.");

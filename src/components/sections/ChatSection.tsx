@@ -43,7 +43,7 @@ export function ChatSection() {
             <p className="t-small mt-3 text-dim">Try it: open a source. This panel restates the chat below so you can explore it here.</p>
           </Reveal>
           <Reveal>
-            <Plate caption="Chat / Sentio">
+            <Plate caption="Chat / Inknest">
               <Picture id="chat" small={{ id: "m-chat" }} alt={chat.images.chat} sizes="(min-width: 1024px) 660px, 92vw" />
             </Plate>
           </Reveal>

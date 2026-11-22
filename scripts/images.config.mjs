@@ -7,7 +7,7 @@
 //   kind   "ui" keeps full chroma for screenshots, "photo" compresses harder for artwork
 //   widths optional override of the width ladder
 //
-// Captures come from scripts/capture/capture.sh: real Briefnest views rendered at 2× with synthetic Sentio data.
+// Captures come from scripts/capture/capture.sh: real Briefnest views rendered at 2× with synthetic Inknest data.
 
 /** Bump to rebuild every file after changing encoder settings. */
 export const PIPELINE_VERSION = 1;

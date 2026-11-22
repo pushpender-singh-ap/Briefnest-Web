@@ -2,7 +2,7 @@
 # Renders the website's product screenshots from the real SwiftUI views.
 #
 # Same approach as marketing/briefnest-product-video/scripts/capture.sh: copy the package to a temporary folder,
-# swap only that copy's entry point for Capture.swift, seed temporary stores with the synthetic Sentio fixture,
+# swap only that copy's entry point for Capture.swift, seed temporary stores with the synthetic Inknest fixture,
 # render the app's own views offscreen and exit. The checkout, the installed app and its data are not touched.
 #
 # Needs the product's Swift toolchain and the FluidAudio checkout that `swift build` resolved into .build/checkouts.
