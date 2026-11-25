@@ -33,6 +33,20 @@ export type Availability =
 
 export type Env = Record<string, string | undefined>;
 
+/** A published build as it is recorded in src/content/release.ts. */
+export interface PublishedRelease {
+  /** Where the disk image is published. */
+  url: string;
+  /** The instant the build stops working (ISO 8601), a bare date for the end of that day, or "never". */
+  expires: string;
+  /** Defaults to time-limited when the build expires, else release. */
+  channel?: ReleaseChannel;
+  sha256?: string;
+  sizeBytes?: number;
+  /** YYYY-MM-DD */
+  released?: string;
+}
+
 export class ConfigError extends Error {
   constructor(variable: string, problem: string) {
     super(`${variable} ${problem}`);
@@ -130,6 +144,24 @@ function download(env: Env, version: string): DownloadableRelease | undefined {
     sizeBytes: size ? Number(size) : undefined,
     releasedOn,
     expiresAt,
+  };
+}
+
+/**
+ * The configuration to build with: the environment, with the published release standing in when the environment
+ * names no download. A download named by the environment replaces the published one entirely, so a link is never
+ * shown beside another build's deadline or checksum.
+ */
+export function withPublishedRelease(env: Env, release: PublishedRelease | null): Env {
+  if (!release || read(env, "NEXT_PUBLIC_DOWNLOAD_URL")) return env;
+  return {
+    ...env,
+    NEXT_PUBLIC_DOWNLOAD_URL: release.url,
+    NEXT_PUBLIC_DOWNLOAD_EXPIRES: release.expires,
+    NEXT_PUBLIC_DOWNLOAD_CHANNEL: release.channel,
+    NEXT_PUBLIC_DOWNLOAD_SHA256: release.sha256,
+    NEXT_PUBLIC_DOWNLOAD_SIZE_BYTES: release.sizeBytes === undefined ? undefined : String(release.sizeBytes),
+    NEXT_PUBLIC_DOWNLOAD_RELEASED: release.released,
   };
 }
 

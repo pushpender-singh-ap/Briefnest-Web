@@ -14,7 +14,7 @@ npm run dev        # http://localhost:3000, with hot reload
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Development server. |
-| `npm run build` | Production build into `out/`. Also refreshes the list of video lengths in `worker/`. |
+| `npm run build` | Production build into `out/`. Also cuts the videos into pieces for Cloudflare (`out/videos/pieces/`) and refreshes `worker/videos.json`. |
 | `npm run preview` | Serves `out/` on port 3000 the way Cloudflare does, with the production headers and the film handler. Runs on this machine only (`wrangler dev`). |
 | `npm run deploy` | Builds, then deploys to Cloudflare. See [Deploy](#deploy). |
 | `npm run lint` | ESLint. |
@@ -32,12 +32,12 @@ The browser tests use installed Google Chrome, because Playwright's own Chromium
 
 ## Configure it
 
-Copy `.env.example` to `.env.local`. Every value is optional and public; there are no secrets. The values are read when the site is built, so on a host they are build settings: on Cloudflare, the Worker's **Settings** > **Build** > **Build variables and secrets**.
+The site needs no configuration: its address is recorded in `src/content/site.ts` and the published download in `src/content/release.ts`. The variables below change one deployment. To try them, copy `.env.example` to `.env.local`. Every value is optional and public; there are no secrets. They are read when the site is built, so on a host they are build settings: on Cloudflare, the Worker's **Settings** > **Build** > **Build variables and secrets**.
 
 | Variable | Effect |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | The production origin. Turns on canonical URLs, the sitemap, absolute social-preview URLs and indexing. On Vercel it is read from the project's production domain if unset. |
-| `NEXT_PUBLIC_DOWNLOAD_URL` | Where a published build lives. Turns the download page into a real download. |
+| `NEXT_PUBLIC_SITE_URL` | A different address than the one recorded in `src/content/site.ts` (`https://ability.ninja`), for a copy served somewhere else. The address turns on canonical URLs, the sitemap, absolute social-preview URLs and indexing. |
+| `NEXT_PUBLIC_DOWNLOAD_URL` | A different file to offer than the published build (see below). Replaces everything in `src/content/release.ts`. |
 | `NEXT_PUBLIC_DOWNLOAD_EXPIRES` | Required with a download URL: the instant the build stops working, or `never`. The page shows it. |
 | `NEXT_PUBLIC_DOWNLOAD_CHANNEL` | `release`, `beta` or `time-limited`. Defaults from the expiry. |
 | `NEXT_PUBLIC_DOWNLOAD_SHA256`, `_SIZE_BYTES`, `_RELEASED` | Shown beside the button. |
@@ -48,19 +48,24 @@ Copy `.env.example` to `.env.local`. Every value is optional and public; there a
 
 ### What the download page shows
 
-The site works out what it may truthfully offer from configuration alone (`src/lib/release.ts`):
+The published build is recorded in `src/content/release.ts`: its address, the moment it stops working, its checksum, size and release date. Every build of the site reads it, so no host needs to be configured for the download to appear. From that record and the variables above, the site works out what it may truthfully offer (`src/lib/release.ts`):
 
-| Configured | The page says |
+| Recorded or configured | The page says |
 | --- | --- |
-| Nothing (today) | "Not available to download yet." No button. |
-| Contact email | "Ask for early access", with a mailto link. |
-| Waitlist endpoint | "Ask for early access", with a form that posts to the endpoint. |
-| Download URL and expiry | Download button, version, channel, size, checksum and the date the build expires, with days left. |
-| Download URL whose expiry has passed | "The last build has expired", then whichever fallback above is configured. |
+| A published build (today) | Download button, version, channel, size, checksum and the date the build expires, with days left. |
+| A published build whose expiry has passed | "The last build has expired", then whichever fallback below is configured. |
+| No build, nothing configured | "Not available to download yet." No button. |
+| No build, a contact email | "Ask for early access", with a mailto link. |
+| No build, a waitlist endpoint | "Ask for early access", with a form that posts to the endpoint. |
 
-A wrong value stops the build with a message naming the variable. A download URL without `NEXT_PUBLIC_DOWNLOAD_EXPIRES` is refused, so a time-limited build can't be published without saying so. The download page also checks the expiry against the visitor's clock, so an old deploy never offers an expired build.
+A wrong value stops the build with a message naming it. A download without an expiry is refused, so a time-limited build can't be published without saying so. The download page also checks the expiry against the visitor's clock, so an old deploy never offers an expired build.
 
-Don't commit a DMG. Host it (a GitHub Release asset, object storage, a CDN) and set the URL.
+### Publish a new build
+
+1. Build and notarize the DMG in the app repository (`scripts/build-production-dmg.sh`). Note the expiry it prints.
+2. Add it to a new GitHub Release of this repository, tagged `v<version>`. Don't commit a DMG.
+3. Put the release's details in `src/content/release.ts`: the asset's address, `expires`, `sha256` (`shasum -a 256 <file>`), `sizeBytes` (`stat -f %z <file>`) and the day it was published.
+4. Run `npm run check`, then commit and push. The site rebuilds with the new download.
 
 The form posts JSON, `{ "email", "consent": true, "source": "briefnest-website" }`, and reports success only when the endpoint answers 2xx. Formspree, Basin, Getform or a small function of your own will accept that.
 
@@ -96,7 +101,7 @@ The approved launch film is `marketing/briefnest-product-video/dist/briefnest-la
 
 Nothing is downloaded until it is needed. The hero paints the poster. On screens 640 px and wider it then fades in the silent preview once the page has loaded, unless the visitor prefers reduced motion, has Data Saver on or is on a slow connection; phones keep the poster. The film itself loads when someone presses a Watch control. The player has play and pause, scrubbing, volume and mute, captions, full screen, and keyboard shortcuts (Space or K, arrows, M, C, F).
 
-These files are kept in the repository so a deploy doesn't need FFmpeg. `npm run media` also rewrites `worker/video-sizes.json`, the list of their lengths that the film handler needs on Cloudflare; a unit test fails if the list and the files disagree. To serve the videos from a CDN instead, change the paths in `film` in `src/content/site.ts`.
+These files are kept in the repository so a deploy doesn't need FFmpeg. `npm run media` also rewrites `worker/videos.json`, the list of their lengths that the film handler needs on Cloudflare; a unit test fails if the list and the files disagree. To serve the videos from a CDN instead, change the paths in `film` in `src/content/site.ts`.
 
 The film's 15-second vertical cut is a social asset and isn't used on the site.
 
@@ -123,7 +128,7 @@ Tokens are in `src/app/globals.css`, in the `@theme` block, and become Tailwind 
 
 ## Tests and measurements
 
-- **Unit**, 143 tests: release and availability rules, formatting, content integrity, the same headers for Cloudflare and Vercel, Range header parsing, the list of video lengths, the early-access form, the download panel, the film player, the source explorer.
+- **Unit**, 149 tests: release and availability rules, the published release's record, formatting, content integrity, the same headers for Cloudflare and Vercel, Range header parsing, the list of video lengths, the early-access form, the download panel, the film player, the source explorer.
 - **Browser**, 132 checks across desktop Chrome, desktop Safari (WebKit) and mobile Safari, against the build served by Cloudflare's runtime on this machine: every page loads without console errors or failed requests; every internal link resolves; a missing page or file gets the not-found page; the film opens, really plays, shows captions, responds to the keyboard and closes; each video is sent in exact parts, compared byte for byte with the file; the mobile menu; tabs, tour, accordion and switches by click, key and swipe; no horizontal scrolling at 375, 768, 1024, 1440 and 1920 px; axe finds no WCAG A or AA violations on any page; the first screen keeps its layout when web fonts replace their fallbacks.
 
 Lighthouse, measured on 21 November 2026 against the local production build with `NEXT_PUBLIC_SITE_URL` set, median of three runs:
@@ -139,9 +144,11 @@ The phone profile simulates a slow 4G connection and a CPU four times slower. Th
 
 The table was measured with the local server the project used at the time. On 25 November 2026, with Cloudflare's runtime serving the same pages (`npm run lighthouse` as it is now), the home page measured 90 on the phone profile (LCP 3.7 s) and 99 on desktop (LCP 0.9 s), and the download page 100 on both.
 
-Without `NEXT_PUBLIC_SITE_URL`, SEO scores 66. That is deliberate: a build that doesn't know its own address marks itself `noindex`.
+Those measurements were taken before the site's address was recorded in the repository. A build that doesn't know its own address marks itself `noindex`, deliberately, and then scores 66 for SEO.
 
-Not tested: real phones and tablets, Firefox, screen readers with a person listening, and a deployed host.
+The same browser checks were run against the deployed site, `https://ability.ninja`, on 25 November 2026, with the first version of the film handler. Every film check passed: each video byte for byte, and playback in Chrome and WebKit. The "loads cleanly" check failed on every page, because Cloudflare's Web Analytics script, which the zone's settings add to each page, is blocked by the site's content security policy and logs an error.
+
+Not tested: real phones and tablets, Firefox, and screen readers with a person listening.
 
 ## Deploy
 
@@ -154,6 +161,7 @@ Nothing is deployed. The repository is set up for Cloudflare Workers; Vercel and
 - **Files.** Everything in `out/` is served as a static file. Those requests are free and unlimited on every Cloudflare plan.
 - **Headers.** `public/_headers` sets the content security policy, the other security headers, and the caching for `/img`, `/_next/static` and `/videos`.
 - **The film.** Cloudflare's file serving answers a byte-range request with the whole file, and a browser needs ranges to skip ahead in a video. A small Worker, `worker/index.ts`, answers them. Only requests for `/videos/*.mp4` run it. The free plan allows 100,000 such requests a day and 10 ms of processor time for each.
+- **Video pieces.** A Worker is handed a file from its first byte only, and reading past megabytes to reach a later part costs processor time. So `npm run build` also stores each video as pieces of 512 KiB in `out/videos/pieces/`, and the Worker puts a part together from the pieces that hold it.
 
 To deploy from this machine:
 
@@ -170,14 +178,16 @@ To deploy on every push instead, connect the repository in the Cloudflare dashbo
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
 | Root directory | Leave empty. |
-| Build variables | The `NEXT_PUBLIC_…` values from [Configure it](#configure-it). |
+| Build variables | None are needed. Any value from [Configure it](#configure-it) can be set to change this deployment. |
 
-The site is first served at `briefnest-website.<your-subdomain>.workers.dev`. To use your own domain, its DNS has to be on Cloudflare; then add it under the Worker's **Settings** > **Domains & Routes** > **Add** > **Custom Domain**. Set `NEXT_PUBLIC_SITE_URL` to the address visitors should use. If you turn on preview builds for other branches, each gets its own `workers.dev` address, which Cloudflare marks `noindex`.
+The site is first served at `briefnest-website.<your-subdomain>.workers.dev`. To use your own domain, its DNS has to be on Cloudflare; then add it under the Worker's **Settings** > **Domains & Routes** > **Add** > **Custom Domain**. The address visitors should use is recorded as `address` in `src/content/site.ts`; change it there if the domain changes. If you turn on preview builds for other branches, each gets its own `workers.dev` address, which Cloudflare marks `noindex`.
 
-After the first deploy, check the two things a local run can't:
+After a deploy, check the two things a local run can't:
 
-- **The film over the real network.** `BASE_URL=https://your-address npx playwright test film-ranges` asks the deployed site for parts of each video and compares them, byte for byte, with the files in `public/videos`.
-- **Processor time.** Open the Worker's logs in the dashboard and read the CPU time of a few film requests. On the local runtime the handler added up to about 3 ms to a request. Cloudflare's own figure is the one that counts against the 10 ms limit, and it hasn't been measured.
+- **The film over the real network.** `BASE_URL=https://ability.ninja npx playwright test film-ranges` asks the deployed site for parts of each video and compares them, byte for byte, with the files in `public/videos`.
+- **Processor time.** Run `npx wrangler tail briefnest-website --format json` while those tests run, and read `cpuTime` for each request. Only Cloudflare's own figure counts against the 10 ms limit, and the local runtime doesn't predict it.
+
+Measured on Cloudflare on 25 November 2026, with the first version of the handler, which read through a file to reach the part asked for: 0 ms for a whole file, about 1.2 ms for each megabyte read past and 2.4 ms for each megabyte copied, so 8 to 36 ms for a request near the end of the 12.4 MB video. No request was refused, but that is over the free plan's limit. The handler now works from pieces to keep every request to one piece read past and one copied. That version has not been measured on Cloudflare yet; from the figures above it should use 2 to 5 ms.
 
 ### Other hosts
 
@@ -191,8 +201,8 @@ After the first deploy, check the two things a local run can't:
 
 ### Before the first production deploy
 
-1. Set `NEXT_PUBLIC_SITE_URL`.
-2. Decide what the download page offers and set those variables.
+1. Check the site's address in `src/content/site.ts`.
+2. Check what the download page offers (`src/content/release.ts`).
 3. Have the privacy and terms pages reviewed. They are labelled as drafts.
 4. Run `npm run check`.
 
@@ -215,7 +225,7 @@ website/
 │   ├── content/     all copy and configuration
 │   └── lib/         release rules, formatting, images, fonts, SEO
 ├── tests/           unit/ and e2e/
-├── worker/          the film handler that runs on Cloudflare, and its list of video lengths
+├── worker/          the film handler that runs on Cloudflare, and its list of the videos
 ├── vercel.json      the same response headers, for Vercel
 └── wrangler.jsonc   Cloudflare Workers configuration
 ```

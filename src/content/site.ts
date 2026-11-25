@@ -3,14 +3,23 @@
  * navigation, the verified release facts and the film's files. Page copy lives next to this file
  * (home.ts, features.ts, faq.ts, legal.ts, changelog.ts).
  *
- * Deployment-specific values (site origin, download link, early-access endpoint) come from environment
- * variables; see .env.example. Everything else is checked against the Briefnest repository.
+ * The site's address is recorded below and the published download in release.ts. Values for one deployment
+ * (an early-access endpoint, another address or another download) come from environment variables; see
+ * .env.example. Everything else is checked against the Briefnest repository.
  */
-import { isIndexable, resolveAvailability, resolveOrigin, httpsUrl } from "@/lib/release";
+import { isIndexable, resolveAvailability, resolveOrigin, httpsUrl, withPublishedRelease } from "@/lib/release";
+import { publishedRelease } from "./release";
+
+/**
+ * The address the site is served at. Knowing it turns on canonical links, the sitemap, absolute social-preview
+ * addresses and indexing by search engines. NEXT_PUBLIC_SITE_URL, when set, takes its place, for a copy of the
+ * site that is served somewhere else.
+ */
+const address = "https://ability.ninja";
 
 /** Next.js inlines NEXT_PUBLIC_* values only when they are read by name. */
-const env = {
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+const env = withPublishedRelease({
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL?.trim() || address,
   NEXT_PUBLIC_DOWNLOAD_URL: process.env.NEXT_PUBLIC_DOWNLOAD_URL,
   NEXT_PUBLIC_DOWNLOAD_EXPIRES: process.env.NEXT_PUBLIC_DOWNLOAD_EXPIRES,
   NEXT_PUBLIC_DOWNLOAD_CHANNEL: process.env.NEXT_PUBLIC_DOWNLOAD_CHANNEL,
@@ -23,7 +32,7 @@ const env = {
   NEXT_PUBLIC_REPOSITORY_URL: process.env.NEXT_PUBLIC_REPOSITORY_URL,
   VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
   VERCEL_ENV: process.env.VERCEL_ENV,
-};
+}, publishedRelease);
 
 export const brand = {
   name: "Briefnest",

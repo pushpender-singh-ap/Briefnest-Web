@@ -73,7 +73,7 @@ case "$what" in
 esac
 
 # On Cloudflare the film handler needs each video's length; keep its list in step with the new files.
-node "$site/scripts/video-sizes.mjs" public
+node "$site/scripts/video-pieces.mjs" public
 
 echo "Web video derivatives in $out:"
 for f in "$out"/*.mp4 "$out"/*.vtt; do

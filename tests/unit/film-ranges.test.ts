@@ -3,13 +3,14 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { film } from "@/content/site";
 import { parseRange } from "../../worker/range";
-import sizes from "../../worker/video-sizes.json";
+import list from "../../worker/videos.json";
 
 // The film handler itself (worker/index.ts) runs only on Cloudflare's runtime, so it is tested there:
 // tests/e2e/film-ranges.spec.ts sends it real requests. These are the parts that can be checked without it.
 
-describe("the list of video lengths the film handler uses", () => {
+describe("the list of videos the film handler uses", () => {
   const videos = join(process.cwd(), "public", "videos");
+  const sizes = list.videos;
 
   it("names every video file with its exact length (if this fails, run `npm run build`)", () => {
     const onDisk = Object.fromEntries(
@@ -25,6 +26,13 @@ describe("the list of video lengths the film handler uses", () => {
     // wrangler.jsonc sends "/videos/*.mp4" to the handler. A source in another folder or format would be
     // served without byte ranges on Cloudflare, and then it couldn't be skipped through.
     for (const source of [...film.sources, ...film.preview]) expect(Object.keys(sizes), source.src).toContain(source.src);
+  });
+
+  it("keeps every request within what Cloudflare's free plan lets a Worker fetch", () => {
+    // The handler fetches one piece at a time, plus one question about the file. The free plan allows 50
+    // fetches a request, so a video may have 49 pieces at most: just under 25.7 MB at 512 KiB a piece.
+    expect(list.pieceBytes).toBe(512 * 1024);
+    for (const [path, size] of Object.entries(sizes)) expect(Math.ceil(size / list.pieceBytes) + 1, path).toBeLessThanOrEqual(50);
   });
 });
 

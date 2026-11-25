@@ -84,25 +84,56 @@ test("is served with the production security and caching headers", async ({ requ
   expect(film.headers()["cache-control"]).toContain("max-age=86400");
 });
 
-test("ships robots.txt, a sitemap and a web manifest", async ({ request }) => {
+test("ships robots.txt, a sitemap and a web manifest", async ({ page, request }) => {
   const robots = await request.get("/robots.txt");
   expect(robots.status()).toBe(200);
-  // This build has no configured origin, so it must keep itself out of search results.
-  expect(await robots.text()).toContain("Disallow: /");
+  const rules = await robots.text();
+  await page.goto("/");
+  const hidden = ((await page.locator('meta[name="robots"]').getAttribute("content")) ?? "").includes("noindex");
+  if (hidden) {
+    // A build that doesn't know its own address keeps itself out of search results, in both places.
+    expect(rules).toContain("Disallow: /");
+  } else {
+    // A build that knows its address welcomes crawlers and names its sitemap there.
+    expect(rules).toMatch(/^Allow: \/$/m);
+    expect(rules).toMatch(/^Sitemap: https:\/\/\S+\/sitemap\.xml$/m);
+    expect(await (await request.get("/sitemap.xml")).text()).toContain("/download</loc>");
+  }
   expect((await request.get("/sitemap.xml")).status()).toBe(200);
   expect((await request.get("/manifest.webmanifest")).status()).toBe(200);
   expect((await request.get("/opengraph-image.jpg")).status()).toBe(200);
 });
 
-test("the download page tells the truth when no build is published", async ({ page }) => {
+test("the download page tells the truth about what can be downloaded", async ({ page }) => {
   await page.goto("/download");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Briefnest for Mac.");
-  await expect(page.getByText("Not available to download yet.")).toBeVisible();
   await expect(page.getByText("0.1.0").first()).toBeVisible();
   await expect(page.getByText("macOS 15 or later · Apple Silicon")).toBeVisible();
-  await expect(page.locator('a[href$=".dmg"]')).toHaveCount(0);
-  await expect(page.getByRole("link", { name: /download for mac/i })).toHaveCount(0);
   await expect(page.getByText(/Pricing hasn’t been announced/)).toBeVisible();
+
+  // The page is either offering a build or saying there is none; which one depends on src/content/release.ts
+  // and on how the site under test was configured.
+  const status = page.locator("dt", { hasText: "Status" }).locator("xpath=following-sibling::dd[1]");
+  const button = page.getByRole("link", { name: /download for mac/i });
+  if (await button.count()) {
+    // A build is offered: the button leads to a disk image over HTTPS, named and sized beside it, and the page
+    // says how long the build works and how to verify the file.
+    await expect(status).toHaveText("Available");
+    const address = (await button.getAttribute("href"))!;
+    expect(address).toMatch(/^https:\/\/\S+\.dmg$/);
+    const fileName = decodeURIComponent(address.split("/").pop()!);
+    await expect(page.getByText(fileName).first()).toBeVisible();
+    await expect(page.getByText(/Disk image for Apple Silicon/)).toBeVisible();
+    await expect(page.getByText(/Time-limited build|Beta|Release/).first()).toBeVisible();
+    const limited = page.getByText(/This build works until \d{1,2} \w+ \d{4}/);
+    if (await page.getByText("Time-limited build").count()) await expect(limited).toBeVisible();
+    const checksum = page.locator("p.t-mono");
+    if (await checksum.count()) expect(((await checksum.first().textContent()) ?? "").trim()).toMatch(/^[0-9a-f]{64}$/);
+  } else {
+    // Nothing is offered: no disk image is linked anywhere on the page, and the status says so.
+    await expect(status).toHaveText(/Not yet public|Last build expired/);
+    await expect(page.locator('a[href$=".dmg"]')).toHaveCount(0);
+  }
 });
 
 test("the legal pages say they are drafts", async ({ page }) => {

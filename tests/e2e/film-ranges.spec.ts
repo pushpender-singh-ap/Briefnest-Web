@@ -4,13 +4,14 @@ import { expect, test, type APIResponse } from "@playwright/test";
 
 // A browser skips through a video by asking for parts of the file. These tests ask for parts the way browsers
 // do and compare every answer, byte for byte, with the file on disk. On Cloudflare the answers come from the
-// film handler in worker/index.ts. Run them against a deployed site with BASE_URL=https://… to check the real thing.
+// film handler in worker/index.ts, which puts each part together from pieces of the video. Run them against a
+// deployed site with BASE_URL=https://… to check the real thing.
 
 const videos = join(process.cwd(), "public", "videos");
 const names = readdirSync(videos)
   .filter((name) => name.endsWith(".mp4"))
   .sort();
-const STEP = 512 * 1024; // The handler moves the file in steps of this size; ranges below cross its edges.
+const PIECE = 512 * 1024; // The size of the pieces the handler works with; the ranges below start, end and cross at their edges.
 const CACHE = "public, max-age=86400, stale-while-revalidate=604800";
 
 test.describe("film requests", () => {
@@ -43,14 +44,19 @@ test.describe("film requests", () => {
       // A skip ahead: from the middle to the end.
       const middle = Math.floor(size / 2) + 7;
       await expectPart(await part(`bytes=${middle}-`), file, middle, size - 1, "middle to the end");
-      // A part that stops early, starting and ending away from the handler's step edges.
-      await expectPart(await part(`bytes=${STEP - 3}-${2 * STEP + 4}`), file, STEP - 3, 2 * STEP + 4, "across two step edges");
-      await expectPart(await part(`bytes=${STEP}-${2 * STEP - 1}`), file, STEP, 2 * STEP - 1, "exactly one step");
+      // Parts that stop early: across two piece edges, exactly one piece, and inside a single piece.
+      await expectPart(await part(`bytes=${PIECE - 3}-${2 * PIECE + 4}`), file, PIECE - 3, 2 * PIECE + 4, "across two piece edges");
+      await expectPart(await part(`bytes=${PIECE}-${2 * PIECE - 1}`), file, PIECE, 2 * PIECE - 1, "exactly one piece");
+      await expectPart(await part(`bytes=${PIECE + 100}-${PIECE + 199}`), file, PIECE + 100, PIECE + 199, "inside one piece");
+      // Parts that begin or end exactly at an edge.
+      await expectPart(await part(`bytes=${PIECE + 5}-${3 * PIECE - 1}`), file, PIECE + 5, 3 * PIECE - 1, "ends at a piece edge");
+      await expectPart(await part(`bytes=${2 * PIECE}-${2 * PIECE + 10}`), file, 2 * PIECE, 2 * PIECE + 10, "starts at a piece edge");
+      await expectPart(await part(`bytes=${PIECE - 1}-${PIECE}`), file, PIECE - 1, PIECE, "two bytes either side of an edge");
       // The end of the file, asked for three ways.
       await expectPart(await part("bytes=-1000"), file, size - 1000, size - 1, "last 1000 bytes");
       await expectPart(await part(`bytes=${size - 1}-${size - 1}`), file, size - 1, size - 1, "last byte");
       await expectPart(await part(`bytes=${size - 10}-${size + 5000}`), file, size - 10, size - 1, "past the end");
-      // Everything but the first and last byte: the longest copy the handler can be asked for.
+      // Everything but the first and last byte: every piece of the video, with both ends cut.
       await expectPart(await part(`bytes=1-${size - 2}`), file, 1, size - 2, "all but two bytes");
     });
   }

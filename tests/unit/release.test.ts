@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { ConfigError, daysLeft, isExpired, isIndexable, resolveAvailability, resolveOrigin } from "@/lib/release";
+import { publishedRelease } from "@/content/release";
+import { ConfigError, daysLeft, isExpired, isIndexable, resolveAvailability, resolveOrigin, withPublishedRelease, type PublishedRelease } from "@/lib/release";
 
 const NOW = new Date("2026-11-21T00:00:00Z");
 const URL_ = "https://downloads.example.com/Briefnest-0.1.0-arm64.dmg";
-const availability = (env: Record<string, string>) => resolveAvailability(env, "0.1.0", NOW);
+const availability = (env: Record<string, string | undefined>) => resolveAvailability(env, "0.1.0", NOW);
 
 describe("what the site may offer", () => {
   it("offers nothing when nothing is configured", () => {
@@ -86,6 +87,65 @@ describe("what the site may offer", () => {
     [{ NEXT_PUBLIC_WAITLIST_ENDPOINT: "http://forms.example.com" }, /must start with https/],
   ])("stops the build on a bad value: %o", (env, message) => {
     expect(() => availability(env)).toThrow(message);
+  });
+});
+
+describe("the published release", () => {
+  const release: PublishedRelease = { url: URL_, expires: "2027-01-19T15:33:50Z", sha256: "a".repeat(64), sizeBytes: 61815916, released: "2026-11-20" };
+
+  it("is offered when the environment names no download", () => {
+    const result = availability(withPublishedRelease({ NEXT_PUBLIC_DOWNLOAD_URL: "", NEXT_PUBLIC_CONTACT_EMAIL: "hello@example.com" }, release));
+    expect(result).toEqual({
+      kind: "download",
+      release: {
+        version: "0.1.0",
+        channel: "time-limited",
+        url: URL_,
+        fileName: "Briefnest-0.1.0-arm64.dmg",
+        sha256: "a".repeat(64),
+        sizeBytes: 61815916,
+        releasedOn: "2026-11-20",
+        expiresAt: "2027-01-19T15:33:50.000Z",
+      },
+    });
+  });
+
+  it("is replaced entirely by a download the environment names", () => {
+    const other = "https://downloads.example.com/Briefnest-0.2.0-arm64.dmg";
+    const result = availability(withPublishedRelease({ NEXT_PUBLIC_DOWNLOAD_URL: other, NEXT_PUBLIC_DOWNLOAD_EXPIRES: "never" }, release));
+    // No deadline, checksum, size or date carried over from the other build.
+    expect(result).toEqual({
+      kind: "download",
+      release: { version: "0.1.0", channel: "release", url: other, fileName: "Briefnest-0.2.0-arm64.dmg", sha256: undefined, sizeBytes: undefined, releasedOn: undefined, expiresAt: undefined },
+    });
+  });
+
+  it("changes nothing while there is none", () => {
+    const env = { NEXT_PUBLIC_CONTACT_EMAIL: "hello@example.com" };
+    expect(withPublishedRelease(env, null)).toBe(env);
+    expect(availability(withPublishedRelease(env, null))).toEqual({ kind: "contact", email: "hello@example.com" });
+  });
+
+  it("is checked like any other configuration", () => {
+    expect(() => availability(withPublishedRelease({}, { ...release, expires: "soon" }))).toThrow(/is not a date/);
+    expect(() => availability(withPublishedRelease({}, { ...release, sha256: "abc" }))).toThrow(/64 hexadecimal/);
+    expect(() => availability(withPublishedRelease({}, { ...release, url: "http://insecure.example.com/b.dmg" }))).toThrow(/must start with https/);
+  });
+
+  it("as recorded in src/content/release.ts, is a complete and consistent description of one disk image", () => {
+    if (!publishedRelease) return;
+    // Resolved on the day it was published, so this keeps passing after the build expires.
+    const result = resolveAvailability(withPublishedRelease({}, publishedRelease), "0.1.0", new Date(`${publishedRelease.released}T12:00:00Z`));
+    expect(result.kind).toBe("download");
+    if (result.kind !== "download") return;
+    // A release asset of the website's own repository on GitHub.
+    expect(result.release.url).toMatch(/^https:\/\/github\.com\/pushpender-singh-ap\/Briefnest-Web\/releases\/download\/v[\d.]+\/Briefnest-[\d.]+-arm64\.dmg$/);
+    expect(result.release.fileName).toMatch(/^Briefnest-[\d.]+-arm64\.dmg$/);
+    expect(result.release.sha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(result.release.sizeBytes).toBeGreaterThan(10_000_000);
+    expect(result.release.releasedOn).toBe(publishedRelease.released);
+    // The site never offers a download without saying when it stops working, or that it never does.
+    expect(publishedRelease.expires).toBeTruthy();
   });
 });
 

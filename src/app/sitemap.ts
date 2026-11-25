@@ -3,7 +3,7 @@ import { deployment } from "@/content/site";
 
 export const dynamic = "force-static";
 
-/** Every page, with absolute URLs. Empty until the site knows its own address (NEXT_PUBLIC_SITE_URL). */
+/** Every page, with absolute URLs. Empty when the site doesn't know its own address (src/content/site.ts). */
 export const routes = ["/", "/features", "/download", "/changelog", "/privacy", "/terms"] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
