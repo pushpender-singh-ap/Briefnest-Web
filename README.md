@@ -1,13 +1,12 @@
 # Briefnest website
 
-The public product site for Briefnest: a home page, a features page, download, changelog, privacy and terms. It is a Next.js App Router project that builds to plain static files, so it can be hosted anywhere. Nothing here is imported by, or imports from, the Swift app.
+The public product site for Briefnest: a home page, a features page, download, changelog, privacy and terms. It is a Next.js App Router project that builds to plain static files, so it can be hosted anywhere; the repository is set up for Cloudflare Workers. Nothing here is imported by, or imports from, the Swift app.
 
 ## Run it
 
-Needs Node.js 22 or later.
+Needs Node.js 22.12 or later.
 
 ```sh
-cd website
 npm install
 npm run dev        # http://localhost:3000, with hot reload
 ```
@@ -15,12 +14,13 @@ npm run dev        # http://localhost:3000, with hot reload
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Development server. |
-| `npm run build` | Production build into `out/`. |
-| `npm run preview` | Serves `out/` on port 3000 the way a static host would, with the production headers. |
+| `npm run build` | Production build into `out/`. Also refreshes the list of video lengths in `worker/`. |
+| `npm run preview` | Serves `out/` on port 3000 the way Cloudflare does, with the production headers and the film handler. Runs on this machine only (`wrangler dev`). |
+| `npm run deploy` | Builds, then deploys to Cloudflare. See [Deploy](#deploy). |
 | `npm run lint` | ESLint. |
-| `npm run typecheck` | Generates Next.js route types, then runs TypeScript with no output. |
+| `npm run typecheck` | Generates the Next.js route types and the Workers runtime types, then runs TypeScript on the site and on the film handler, with no output. |
 | `npm test` | Unit tests (Vitest). |
-| `npm run test:e2e` | Browser tests (Playwright) against `out/`. Run `npm run build` first. |
+| `npm run test:e2e` | Browser tests (Playwright) against `out/`, served the way `npm run preview` serves it. Run `npm run build` first. |
 | `npm run check` | All of the above, in order. Run this before deploying. |
 | `npm run lighthouse` | Measures the built site with Lighthouse and prints the scores. |
 | `npm run screenshots` | Review screenshots of a running site at 375, 768, 1024, 1440 and 1920 px. |
@@ -32,7 +32,7 @@ The browser tests use installed Google Chrome, because Playwright's own Chromium
 
 ## Configure it
 
-Copy `.env.example` to `.env.local`. Every value is optional and public; there are no secrets.
+Copy `.env.example` to `.env.local`. Every value is optional and public; there are no secrets. The values are read when the site is built, so on a host they are build settings: on Cloudflare, the Worker's **Settings** > **Build** > **Build variables and secrets**.
 
 | Variable | Effect |
 | --- | --- |
@@ -96,7 +96,7 @@ The approved launch film is `marketing/briefnest-product-video/dist/briefnest-la
 
 Nothing is downloaded until it is needed. The hero paints the poster. On screens 640 px and wider it then fades in the silent preview once the page has loaded, unless the visitor prefers reduced motion, has Data Saver on or is on a slow connection; phones keep the poster. The film itself loads when someone presses a Watch control. The player has play and pause, scrubbing, volume and mute, captions, full screen, and keyboard shortcuts (Space or K, arrows, M, C, F).
 
-These files are kept in the repository so a deploy doesn't need FFmpeg. To serve them from a CDN instead, change the paths in `film` in `src/content/site.ts`.
+These files are kept in the repository so a deploy doesn't need FFmpeg. `npm run media` also rewrites `worker/video-sizes.json`, the list of their lengths that the film handler needs on Cloudflare; a unit test fails if the list and the files disagree. To serve the videos from a CDN instead, change the paths in `film` in `src/content/site.ts`.
 
 The film's 15-second vertical cut is a social asset and isn't used on the site.
 
@@ -123,8 +123,8 @@ Tokens are in `src/app/globals.css`, in the `@theme` block, and become Tailwind 
 
 ## Tests and measurements
 
-- **Unit**, 118 tests: release and availability rules, formatting, content integrity, header parity, the early-access form, the download panel, the film player, the source explorer.
-- **Browser**, 118 checks across desktop Chrome, desktop Safari (WebKit) and mobile Safari: every page loads without console errors or failed requests; every internal link resolves; the film opens, really plays, shows captions, responds to the keyboard and closes; the mobile menu; tabs, tour, accordion and switches by click, key and swipe; no horizontal scrolling at 375, 768, 1024, 1440 and 1920 px; axe finds no WCAG A or AA violations on any page; the first screen keeps its layout when web fonts replace their fallbacks.
+- **Unit**, 143 tests: release and availability rules, formatting, content integrity, the same headers for Cloudflare and Vercel, Range header parsing, the list of video lengths, the early-access form, the download panel, the film player, the source explorer.
+- **Browser**, 132 checks across desktop Chrome, desktop Safari (WebKit) and mobile Safari, against the build served by Cloudflare's runtime on this machine: every page loads without console errors or failed requests; every internal link resolves; a missing page or file gets the not-found page; the film opens, really plays, shows captions, responds to the keyboard and closes; each video is sent in exact parts, compared byte for byte with the file; the mobile menu; tabs, tour, accordion and switches by click, key and swipe; no horizontal scrolling at 375, 768, 1024, 1440 and 1920 px; axe finds no WCAG A or AA violations on any page; the first screen keeps its layout when web fonts replace their fallbacks.
 
 Lighthouse, measured on 21 November 2026 against the local production build with `NEXT_PUBLIC_SITE_URL` set, median of three runs:
 
@@ -137,23 +137,59 @@ Lighthouse, measured on 21 November 2026 against the local production build with
 
 The phone profile simulates a slow 4G connection and a CPU four times slower. The home page's 3.5 s is Lighthouse's model of that connection applied to a localhost trace. With the same limits actually enforced in Chrome (`--throttling-method=devtools`), the home page measured 98 to 99, with LCP 1.8 s and CLS 0 in each of three runs. Expect different numbers on a real host: these are local measurements, not field data.
 
+The table was measured with the local server the project used at the time. On 25 November 2026, with Cloudflare's runtime serving the same pages (`npm run lighthouse` as it is now), the home page measured 90 on the phone profile (LCP 3.7 s) and 99 on desktop (LCP 0.9 s), and the download page 100 on both.
+
 Without `NEXT_PUBLIC_SITE_URL`, SEO scores 66. That is deliberate: a build that doesn't know its own address marks itself `noindex`.
 
 Not tested: real phones and tablets, Firefox, screen readers with a person listening, and a deployed host.
 
 ## Deploy
 
-Nothing is deployed. To deploy:
+Nothing is deployed. The repository is set up for Cloudflare Workers; Vercel and other static hosts still work.
 
-**Vercel.** Import the repository, set the root directory to `website`, keep the Next.js preset. Add environment variables from the table above. `vercel.json` sets the content security policy, the other security headers, and long caching for `/img` and `/_next/static`.
+### Cloudflare Workers
 
-**Any static host** (Netlify, Cloudflare Pages, GitHub Pages, S3 with a CDN, nginx). Run `npm run build` and upload `out/`. The host needs to:
+`wrangler.jsonc` describes the deployment:
+
+- **Files.** Everything in `out/` is served as a static file. Those requests are free and unlimited on every Cloudflare plan.
+- **Headers.** `public/_headers` sets the content security policy, the other security headers, and the caching for `/img`, `/_next/static` and `/videos`.
+- **The film.** Cloudflare's file serving answers a byte-range request with the whole file, and a browser needs ranges to skip ahead in a video. A small Worker, `worker/index.ts`, answers them. Only requests for `/videos/*.mp4` run it. The free plan allows 100,000 such requests a day and 10 ms of processor time for each.
+
+To deploy from this machine:
+
+```sh
+npx wrangler login    # once
+npm run deploy        # builds, then uploads
+```
+
+To deploy on every push instead, connect the repository in the Cloudflare dashboard (**Workers & Pages** > **Create application** > **GitHub**) with these settings:
+
+| Setting | Value |
+| --- | --- |
+| Worker name | `briefnest-website`. It must match `name` in `wrangler.jsonc`, or the build fails. |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | Leave empty. |
+| Build variables | The `NEXT_PUBLIC_…` values from [Configure it](#configure-it). |
+
+The site is first served at `briefnest-website.<your-subdomain>.workers.dev`. To use your own domain, its DNS has to be on Cloudflare; then add it under the Worker's **Settings** > **Domains & Routes** > **Add** > **Custom Domain**. Set `NEXT_PUBLIC_SITE_URL` to the address visitors should use. If you turn on preview builds for other branches, each gets its own `workers.dev` address, which Cloudflare marks `noindex`.
+
+After the first deploy, check the two things a local run can't:
+
+- **The film over the real network.** `BASE_URL=https://your-address npx playwright test film-ranges` asks the deployed site for parts of each video and compares them, byte for byte, with the files in `public/videos`.
+- **Processor time.** Open the Worker's logs in the dashboard and read the CPU time of a few film requests. On the local runtime the handler added up to about 3 ms to a request. Cloudflare's own figure is the one that counts against the 10 ms limit, and it hasn't been measured.
+
+### Other hosts
+
+**Vercel.** Import the repository and keep the Next.js preset. Add environment variables from the table above. `vercel.json` sets the same headers as `public/_headers`, and a unit test keeps the two in step.
+
+**Any static host** (Netlify, S3 with a CDN, nginx). Run `npm run build` and upload `out/`. The host needs to:
 
 - serve `/features` from `features.html` (most do; for hosts that don't, set `trailingSlash: true` in `next.config.ts`);
 - answer HTTP range requests, or the film can't be scrubbed;
-- send the headers in `vercel.json`. `serve.json` holds the same headers for the local preview, and a unit test keeps the two in step.
+- send the headers in `public/_headers`.
 
-Before the first production deploy:
+### Before the first production deploy
 
 1. Set `NEXT_PUBLIC_SITE_URL`.
 2. Decide what the download page offers and set those variables.
@@ -164,19 +200,22 @@ Before the first production deploy:
 
 **Selling Briefnest.** No price, plan or trial exists, so the site states that and takes no payments (`commerce` in `src/content/site.ts`, shown on the download page). When pricing is decided, describe it there, render it on the download page, and link the purchase button to the checkout you choose. The content test that forbids prices will fail at that point; update it in the same change.
 
-**Analytics.** There are none, and the privacy page says so. If you add any, update that page and the `Content-Security-Policy` in `vercel.json` and `serve.json` together.
+**Analytics.** There are none, and the privacy page says so. If you add any, update that page and the `Content-Security-Policy` in `public/_headers` and `vercel.json` together.
 
 ## Layout
 
 ```text
 website/
 ├── assets/          app captures, the source for the screenshots (not served)
-├── public/          img/ (generated), videos/ (generated)
+├── public/          img/ (generated), videos/ (generated), _headers (response headers on Cloudflare)
 ├── scripts/         media, image, capture, screenshot and Lighthouse scripts
 ├── src/
 │   ├── app/         routes, metadata, sitemap, robots, global styles
 │   ├── components/  layout/, sections/, ui/, video/, download/
 │   ├── content/     all copy and configuration
 │   └── lib/         release rules, formatting, images, fonts, SEO
-└── tests/           unit/ and e2e/
+├── tests/           unit/ and e2e/
+├── worker/          the film handler that runs on Cloudflare, and its list of video lengths
+├── vercel.json      the same response headers, for Vercel
+└── wrangler.jsonc   Cloudflare Workers configuration
 ```

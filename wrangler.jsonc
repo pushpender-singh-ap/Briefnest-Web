@@ -1,0 +1,23 @@
+// Cloudflare Workers configuration: how the built site in out/ is served. See "Deploy" in README.md.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // The Worker's name in the Cloudflare dashboard, and the first part of its workers.dev address.
+  "name": "briefnest-website",
+  "compatibility_date": "2026-11-23",
+  // The film handler. It runs only for the requests named in run_worker_first, below.
+  "main": "worker/index.ts",
+  "upload_source_maps": true,
+  "assets": {
+    // What `npm run build` writes. public/_headers is copied there and sets the response headers.
+    "directory": "./out",
+    "binding": "ASSETS",
+    // An unknown address gets out/404.html with a 404 status.
+    "not_found_handling": "404-page",
+    // Only the video files go through the Worker, because a browser needs byte ranges to skip ahead in a
+    // video and Cloudflare's file serving doesn't answer them. Every other request, missing pages included,
+    // is served as a plain file: free and unlimited on every plan, and never counted as a Worker request.
+    "run_worker_first": ["/videos/*.mp4"]
+  },
+  // Keeps a log entry for each film request, with its processor time, in the Cloudflare dashboard.
+  "observability": { "enabled": true }
+}

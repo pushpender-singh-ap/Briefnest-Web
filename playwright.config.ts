@@ -1,8 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// End-to-end tests run against the production build in out/, served the way a static host would serve it,
-// with the same security and caching headers as production (serve.json mirrors vercel.json).
-// `npm run test:e2e` expects `npm run build` to have run (`npm run check` does both).
+// End-to-end tests run against the production build in out/, served by the runtime that serves it on Cloudflare
+// (`wrangler dev`, entirely on this machine): the same file routing, the headers in public/_headers and the
+// film handler in worker/. `npm run test:e2e` expects `npm run build` to have run (`npm run check` does both).
+// Set BASE_URL to test a site that is already running, such as the deployed one.
 const port = Number(process.env.E2E_PORT ?? 4173);
 const baseURL = process.env.BASE_URL ?? `http://localhost:${port}`;
 
@@ -15,7 +16,7 @@ export default defineConfig({
   use: { baseURL, trace: "retain-on-failure" },
   webServer: process.env.BASE_URL
     ? undefined
-    : { command: `npx serve out --config ../serve.json --listen ${port} --no-clipboard`, url: baseURL, reuseExistingServer: !process.env.CI, timeout: 60_000 },
+    : { command: `npx wrangler dev --port ${port} --persist-to .wrangler/e2e`, url: baseURL, reuseExistingServer: !process.env.CI, timeout: 60_000 },
   projects: [
     {
       // Installed Google Chrome, because Playwright's own Chromium ships without the H.264 and AAC decoders

@@ -66,6 +66,14 @@ test("an unknown address gets the not-found page", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Go to the home page" })).toBeVisible();
 });
 
+test("a missing file gets the not-found page too, with the security headers", async ({ request }) => {
+  // Not a page navigation: the way a script, an image tag or a crawler asks.
+  const response = await request.get("/no-such-file.txt");
+  expect(response.status()).toBe(404);
+  expect(await response.text()).toContain("<title>Page not found");
+  expect(response.headers()["content-security-policy"]).toContain("default-src 'self'");
+});
+
 test("is served with the production security and caching headers", async ({ request }) => {
   const page = await request.get("/");
   expect(page.headers()["content-security-policy"]).toContain("default-src 'self'");

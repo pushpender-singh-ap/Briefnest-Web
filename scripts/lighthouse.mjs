@@ -4,9 +4,9 @@
 //   npm run lighthouse -- /privacy                 other paths
 //   LH_RUNS=5 npm run lighthouse                   more runs per page (default 3; the median is reported)
 //
-// Serves out/ on a local port, runs Lighthouse (fetched with npx on first use) in headless Chrome, and saves
-// the full HTML and JSON reports in .lighthouse/. Local numbers are a guide: a real host adds compression,
-// HTTP/2 and distance.
+// Serves out/ on a local port the way Cloudflare does (`wrangler dev`), runs Lighthouse (fetched with npx on
+// first use) in headless Chrome, and saves the full HTML and JSON reports in .lighthouse/. Local numbers are a
+// guide: a real host adds HTTP/2 and distance.
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -19,10 +19,19 @@ const paths = process.argv.slice(2).filter((arg) => arg.startsWith("/"));
 const targets = paths.length ? paths : ["/", "/features", "/download"];
 mkdirSync(out, { recursive: true });
 
-const server = spawn("npx", ["serve", "out", "--config", "../serve.json", "--listen", String(port), "--no-clipboard"], { cwd: site, stdio: "ignore" });
+const server = spawn("npx", ["wrangler", "dev", "--port", String(port), "--persist-to", ".wrangler/lighthouse"], { cwd: site, stdio: "ignore" });
 const stop = () => server.kill();
 process.on("exit", stop);
-await new Promise((ready) => setTimeout(ready, 2500));
+// The local server takes a few seconds to start; wait until it answers.
+for (const started = Date.now(); ; ) {
+  const answered = await fetch(`http://localhost:${port}/`).then((response) => response.ok, () => false);
+  if (answered) break;
+  if (Date.now() - started > 60_000) {
+    console.error("The local server did not start. Run `npm run build` first, then try `npm run preview` to see why.");
+    process.exit(1);
+  }
+  await new Promise((retry) => setTimeout(retry, 250));
+}
 
 // Lighthouse scores move from run to run, so each page is measured several times and the median is reported.
 const runs = Number(process.env.LH_RUNS ?? 3);

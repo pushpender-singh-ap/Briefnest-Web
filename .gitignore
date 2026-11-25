@@ -20,6 +20,9 @@ next-env.d.ts
 
 # deploy
 .vercel
+# Wrangler's working folder, and the Workers runtime types that `npm run typecheck` generates
+.wrangler/
+/worker/worker-configuration.d.ts
 
 # misc
 .DS_Store

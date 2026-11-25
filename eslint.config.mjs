@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Written by Wrangler: its working folder and the generated Workers runtime types.
+    ".wrangler/**",
+    "worker/worker-configuration.d.ts",
   ]),
 ]);
 

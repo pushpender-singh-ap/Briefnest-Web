@@ -4,14 +4,15 @@
   "description": "The Briefnest product website: a static Next.js site.",
   "private": true,
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "preview": "serve out --config ../serve.json --listen 3000 --no-clipboard",
+    "build": "next build && node scripts/video-sizes.mjs",
+    "preview": "wrangler dev --port 3000",
+    "deploy": "npm run build && wrangler deploy",
     "lint": "eslint",
-    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit && wrangler types worker/worker-configuration.d.ts && tsc --noEmit -p worker",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
@@ -44,10 +45,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "jsdom": "^29.1.1",
-    "serve": "^14.2.8",
     "sharp": "^0.35.5",
     "tailwindcss": "4.3.3",
     "typescript": "^5",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.1",
+    "wrangler": "^4.168.0"
   }
 }
