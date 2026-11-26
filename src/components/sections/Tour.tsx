@@ -73,7 +73,7 @@ export function Tour({ items, shots }: TourProps) {
         role="tablist"
         aria-label="Product tour"
         onKeyDown={onKeyDown}
-        className="no-scrollbar -mx-[var(--gutter)] flex gap-1.5 overflow-x-auto px-[var(--gutter)] pb-1 lg:mx-0 lg:justify-center lg:px-0"
+        className="no-scrollbar -mx-[var(--gutter)] flex gap-1.5 overflow-x-auto px-[var(--gutter)] pb-1 lg:mx-0 lg:justify-center-safe lg:px-0"
       >
         {items.map((item, index) => {
           const selected = index === active;
@@ -136,7 +136,7 @@ export function Tour({ items, shots }: TourProps) {
           </div>
         </div>
 
-        {/* From 640 px up every screenshot is the same window size, so they share one grid cell and cross-fade.
+        {/* From 640 px up the screenshots share one grid cell and cross-fade.
             Below that the narrow renders differ in height, so only the chosen one takes up space. */}
         <div className="mt-7 grid touch-pan-y [&>*]:col-start-1 [&>*]:row-start-1" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => (drag.current = null)}>
           {shots.map((shot, index) => (

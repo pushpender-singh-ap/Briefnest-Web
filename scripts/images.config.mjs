@@ -54,6 +54,15 @@ export const images = [
   capture("m-decisions", [1190, 150, 1170, 800], { from: "win-decisions" }),
   capture("m-code", [0, 0, 700, 420], { from: "repository" }),
 
+  // Connector views from the 0.2.0 film's Inknest fixture. On phones, show the issue rows or the message.
+  capture("jira"),
+  capture("multica"),
+  capture("mail"),
+  capture("ticket-proposal"),
+  capture("m-jira", [0, 0, 835, 675], { from: "jira" }),
+  capture("m-multica", [0, 0, 835, 560], { from: "multica" }),
+  capture("m-mail", [800, 210, 1360, 540], { from: "mail" }),
+
   // Sheets, panes and cards
   capture("setup", [20, 104, 1160, 612]),
   capture("transcript", [0, 0, 1480, 760]),

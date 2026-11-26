@@ -11,6 +11,7 @@ import { brand, commerce, cta, film, footerNav, nav, product } from "@/content/s
 import { image, imageIds, imageUrl } from "@/lib/images";
 
 const publicDir = join(process.cwd(), "public");
+const mediaFile = (src: string) => join(publicDir, new URL(src, "https://example.test").pathname);
 const homeSections = new Set([
   home.problem.id,
   home.how.id,
@@ -60,21 +61,22 @@ describe("media", () => {
 
   it("serves web derivatives of the film, never the 4K master", () => {
     for (const source of [...film.sources, ...film.preview]) {
-      expect(existsSync(join(publicDir, source.src)), source.src).toBe(true);
+      expect(existsSync(mediaFile(source.src)), source.src).toBe(true);
       expect(source.src).not.toMatch(/4k/i);
     }
-    expect(existsSync(join(publicDir, film.posterFile))).toBe(true);
+    expect(existsSync(mediaFile(film.posterFile))).toBe(true);
   });
 
   it("ends the source list with a plain H.264 file every browser can play", () => {
-    expect(film.sources.at(-1)).toEqual({ src: "/videos/briefnest-film-1080p.mp4", type: "video/mp4" });
+    expect(film.sources.at(-1)).toEqual({ src: "/videos/briefnest-film-1080p.mp4?v=0.2.0", type: "video/mp4" });
     expect(film.preview.at(-1)?.type).toBe("video/mp4");
   });
 
   it("ships the film's captions, cue for cue", () => {
-    const vtt = readFileSync(join(publicDir, film.captions[0].src), "utf8");
+    const vtt = readFileSync(mediaFile(film.captions[0].src), "utf8");
     expect(vtt.startsWith("WEBVTT")).toBe(true);
     expect(vtt.match(/-->/g)).toHaveLength(14);
+    expect(vtt).toContain("A match can turn a new issue into a comment.");
     expect(vtt).toContain("Where conversations\nconnect to the work.");
   });
 });
@@ -89,12 +91,12 @@ describe("copy", () => {
   });
 
   it("states the verified requirements", () => {
-    expect(product.version).toBe("0.1.0");
+    expect(product.version).toBe("0.2.0");
     expect(product.minimumOSLong).toBe("macOS 15 or later");
     expect(product.chip).toBe("Apple Silicon");
   });
 
-  it("answers the ten questions the brief lists, in order", () => {
+  it("covers installation, connected tools, review and sharing in the FAQ", () => {
     expect(faqs.map((faq) => faq.question)).toEqual([
       "What is Briefnest?",
       "Which operating systems are supported?",
@@ -102,6 +104,7 @@ describe("copy", () => {
       "Which transcription options are available?",
       "Can I use Claude Code or Codex?",
       "Can Briefnest connect to GitHub and GitLab?",
+      "What can Briefnest change in Jira, Multica or my mailbox?",
       "Can I review AI-generated changes?",
       "Can I use Briefnest with multiple projects?",
       "How does team sharing work?",
@@ -110,7 +113,7 @@ describe("copy", () => {
     for (const faq of faqs) expect(faq.answer.join(" ").length).toBeGreaterThan(60);
   });
 
-  it("covers the eight screens of the product tour", () => {
+  it("covers the workspace and its connected tools in the product tour", () => {
     expect(home.tour.items.map((item) => item.title)).toEqual([
       "Workspace overview",
       "Meeting notes",
@@ -119,6 +122,9 @@ describe("copy", () => {
       "Decisions",
       "Chat",
       "Code",
+      "Jira",
+      "Multica",
+      "Mail",
       "Review",
     ]);
   });
@@ -150,7 +156,7 @@ describe("copy", () => {
     expect(termsPage.status).toMatch(/draft/i);
   });
 
-  it("lists only the version that exists", () => {
-    expect(changelog.map((entry) => entry.version)).toEqual([product.version]);
+  it("shows the current release first and retains the previous release notes", () => {
+    expect(changelog.map((entry) => entry.version)).toEqual([product.version, "0.1.0"]);
   });
 });

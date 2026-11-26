@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
 import { changelog } from "@/content/changelog";
+import { releasesUrl } from "@/content/release";
 import { deployment } from "@/content/site";
 import { formatDate } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
@@ -15,14 +16,14 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function ChangelogPage() {
-  const published = deployment.availability.kind === "download";
+  const currentDownload = deployment.availability.kind === "download" ? deployment.availability.release.version : undefined;
   return (
     <>
       <PageHeader eyebrow="Changelog" title={<>What’s <em>new.</em></>}>
-        <p>Every entry here comes from the project’s release record. Nothing is listed before it exists.</p>
+        <p>Follow what changed in each Mac release and find the installer that goes with it.</p>
       </PageHeader>
 
-      <div className="container-page pb-[clamp(5rem,10vw,9rem)]">
+      <div className="container-page grid gap-20 pb-[clamp(5rem,10vw,9rem)]">
         {changelog.map((entry) => (
           <article key={entry.version} aria-labelledby={`v${entry.version}`} className="grid gap-x-14 gap-y-8 border-t border-white/10 pt-10 lg:grid-cols-[14rem_1fr]">
             <Reveal>
@@ -31,7 +32,7 @@ export default function ChangelogPage() {
                 <p className="t-mono mt-3 text-label uppercase">
                   <time dateTime={entry.date}>{formatDate(entry.date)}</time>
                 </p>
-                <p className="pill mt-4">{published ? "Available" : "Pre-release · not yet public"}</p>
+                {entry.version === currentDownload && <p className="pill mt-4">Current download</p>}
               </div>
             </Reveal>
 
@@ -73,10 +74,14 @@ export default function ChangelogPage() {
                 </Reveal>
               </div>
 
-              <Link href="/download" className="link mt-10 inline-flex items-center gap-1.5">
-                Download and availability
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
+              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+                {entry.version === currentDownload && (
+                  <Link href="/download" className="link inline-flex items-center gap-1.5">
+                    Download for Mac <ArrowRight className="size-4" aria-hidden="true" />
+                  </Link>
+                )}
+                <a href={`${releasesUrl}/tag/v${entry.version}`} className="link">View {entry.version} on GitHub</a>
+              </div>
             </div>
           </article>
         ))}

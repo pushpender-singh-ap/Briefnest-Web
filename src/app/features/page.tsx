@@ -15,9 +15,9 @@ import { image } from "@/lib/images";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Features: meeting capture, AI notes, decisions and code context",
+  title: "Features · Meetings, tickets and project mail",
   description:
-    "Every Briefnest feature in detail: Mac meeting transcription, AI meeting notes you approve, action tracking, versioned decisions, source-backed chat, GitHub and GitLab context, and MCP for coding agents.",
+    "Explore meeting notes, decisions, Jira and Multica tickets, project mail and code in Briefnest. See how search finds the source and Review handles proposed changes.",
   path: "/features",
 });
 
@@ -106,7 +106,7 @@ export default function FeaturesPage() {
             <h2 id="features-next" className="t-h2 mx-auto max-w-[9.9em]">
               See it <em>in motion.</em>
             </h2>
-            <p className="t-lead mx-auto mt-6 max-w-xl">One decision, followed from a meeting to a merged pull request, in a minute.</p>
+            <p className="t-lead mx-auto mt-6 max-w-xl">See how a sprint decision and a Friday rollout email become a proposed comment on Asha’s Jira ticket.</p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <FilmTrigger className="btn btn-primary btn-lg">
                 <Play className="size-4 fill-current" aria-hidden="true" />

@@ -65,7 +65,7 @@ export function Hero() {
         </div>
 
         <p className="t-mono rise mt-6 text-dim" style={{ ["--i" as string]: 4 }}>
-          {product.minimumOSLong} · {product.chip}
+          {product.minimumOSLong} · {product.chip} · <Link className="link" href="/changelog">What’s new in {product.version}</Link>
         </p>
       </div>
 

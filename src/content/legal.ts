@@ -24,7 +24,7 @@ export const privacyPage = {
   status: "Draft for legal review",
   statusNote:
     "This page describes how Briefnest and this website handle data today. It was written from the product’s own privacy audit and has not been reviewed by a lawyer. It is not yet a final privacy policy.",
-  updated: "2026-11-20",
+  updated: "2026-11-26",
   lead: "Briefnest is a Mac app that keeps your meetings and project memory in files on your Mac. Data leaves the Mac only when you use a feature that needs a service you chose.",
   blocks: [
     {
@@ -49,9 +49,12 @@ export const privacyPage = {
           ["Transcripts, speaker labels and names", "In the app’s archive file.", "When used as context for AI notes or chat, or read by a connected coding agent."],
           ["Screen snapshots and their recognized text", "Images in the Recordings folder; text in the archive.", "Images never. Text only as AI context."],
           ["Notes, action items, decisions, open questions", "In the app’s archive file.", "As AI context, through a connected agent, or when you share them with a group."],
-          ["Chat questions, answers and quoted sources", "In a per-workspace history file.", "The question and matching passages go to your AI provider."],
+          ["Chat questions, answers and quoted sources", "In local AI history, stored as files or in a SQLite database.", "The question and matching passages go to your chosen AI provider."],
           ["Team list and your profile", "In the app’s archive file.", "Names, roles and nicknames go into notes prompts. Email addresses are not sent."],
           ["Repository data", "In a local search database.", "Fetched from GitHub or GitLab; excerpts can be sent as chat context."],
+          ["Jira and Multica issues", "Synced issue details and links to Briefnest work are kept on your Mac.", "Refreshing reads the connected tracker. Approved AI proposals send the selected change to that tracker."],
+          ["Project email and attachments", "Selected folders in a local mail database, with attachments stored separately.", "Relevant text can go to your AI provider when mail reading is enabled. MCP mail access needs a separate opt-in. Imported mail is excluded from team-sharing exports."],
+          ["Search by meaning", "A local index of the passages used for search.", "Apple, Ollama and LM Studio can process passages on your Mac. A cloud embedding model receives passages and questions when selected."],
           ["Tokens, keys and passphrases", "macOS Keychain.", "Only to the service they belong to."],
         ],
       },
@@ -65,11 +68,12 @@ export const privacyPage = {
         "AI notes and chat send the relevant text to the AI provider you selected. With Claude Code, Codex or another cloud provider that means their service; with Ollama or LM Studio it stays on your Mac.",
         "Cloud transcription, if you choose Deepgram, ElevenLabs or an OpenAI-compatible endpoint, sends short chunks of audio to that service.",
         "Repository sync calls the GitHub or GitLab API for the repositories you connect.",
-        "A coding agent connected over MCP sends whatever it reads from Briefnest to its own AI provider. Agent access is off until you turn it on.",
+        "Each connector has an AI reading switch. Jira and Multica also have a switch for suggesting changes. Sensitive-data masking is on by default and replaces recognized passwords, access tokens and other sensitive patterns before AI processing.",
+        "A connected MCP agent can use the workspace material it reads with its own provider. Mail access and asking the running Briefnest app to answer with its AI have separate opt-ins. Recognized sensitive data is always masked for MCP and cloud embeddings.",
         "Team sharing publishes only the items you choose, to the Git repository you choose, after showing you a preview.",
       ],
       after: [
-        "A fully local setup is possible: on-device transcription, a local model for AI and agent access off. Then nothing leaves the Mac except repository sync, if you connect repositories.",
+        "For local processing, choose on-device transcription, local models for chat and search, and leave external connectors, agent access and team publishing off.",
         "The app itself has no analytics, crash reporting or other phone-home.",
       ],
     },
@@ -92,6 +96,7 @@ export const privacyPage = {
         "Delete a meeting to remove its transcript, speaker names, notes, screen snapshots, saved audio and AI drafts. You can choose to keep its chats, action items and decisions.",
         "Delete a chat, a decision, or kept audio and screen images individually. Automatic cleanup of saved audio and images is available and off by default.",
         "Remove a repository to remove its local snapshot and search index.",
+        "When disconnecting a mailbox, choose whether to keep or delete its imported messages. History & Search lets you manage AI history and clear the meaning-based search index.",
         "To remove everything, quit Briefnest and delete ~/Library/Application Support/Briefnest and the Briefnest items in Keychain Access.",
         "Anything you published to a team repository stays in that repository’s history and in existing clones.",
       ],
@@ -111,7 +116,7 @@ export const termsPage = {
   status: "Draft, not in force",
   statusNote:
     "These are working notes on what Briefnest’s terms will need to cover. They are not a contract, they have not been reviewed by a lawyer, and nothing here binds you or Briefnest yet.",
-  updated: "2026-11-20",
+  updated: "2026-11-26",
   lead: "Briefnest is pre-release software. Final terms will be published here before any build is sold. Until then, this is what you can rely on as a description of how things work.",
   blocks: [
     {
@@ -131,7 +136,7 @@ export const termsPage = {
     {
       heading: "Services you connect",
       paragraphs: [
-        "AI providers, speech services, GitHub, GitLab and coding agents are separate products with their own terms and accounts. Using them through Briefnest is using them under those terms. Briefnest doesn’t bundle their software or credentials.",
+        "The AI and speech providers, repositories, Jira or Multica accounts, mail services and coding agents you connect have their own terms and account settings. Those terms apply when you use those services through Briefnest.",
       ],
     },
     {

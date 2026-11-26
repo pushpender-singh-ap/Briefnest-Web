@@ -25,7 +25,9 @@ describe("the list of videos the film handler uses", () => {
   it("covers every file the player and the hero preview load", () => {
     // wrangler.jsonc sends "/videos/*.mp4" to the handler. A source in another folder or format would be
     // served without byte ranges on Cloudflare, and then it couldn't be skipped through.
-    for (const source of [...film.sources, ...film.preview]) expect(Object.keys(sizes), source.src).toContain(source.src);
+    for (const source of [...film.sources, ...film.preview]) {
+      expect(Object.keys(sizes), source.src).toContain(new URL(source.src, "https://example.test").pathname);
+    }
   });
 
   it("keeps every request within what Cloudflare's free plan lets a Worker fetch", () => {

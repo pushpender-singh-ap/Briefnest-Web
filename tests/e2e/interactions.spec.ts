@@ -17,7 +17,7 @@ test.describe("the film", () => {
       for (let i = 0; i < 100 && !element.currentSrc; i++) await new Promise((resolve) => setTimeout(resolve, 50));
       return element.currentSrc;
     });
-    expect(source).toMatch(isMobile ? /briefnest-film-720p\.mp4$/ : /briefnest-film-1080p(\.av1)?\.mp4$/);
+    expect(new URL(source).pathname).toMatch(isMobile ? /briefnest-film-720p\.mp4$/ : /briefnest-film-1080p(\.av1)?\.mp4$/);
     expect(source).not.toMatch(/4k/);
 
     const canPlay = await video.evaluate((element: HTMLVideoElement) => element.canPlayType('video/mp4; codecs="avc1.640029, mp4a.40.2"') !== "");
@@ -42,7 +42,7 @@ test.describe("the film", () => {
     await page.keyboard.press("c");
     await expect(player.getByRole("button", { name: "Turn captions off" })).toBeVisible();
     await video.evaluate((element: HTMLVideoElement) => (element.currentTime = 0.8));
-    await expect(player.getByText("Great ideas happen in meetings.")).toBeVisible({ timeout: 10_000 });
+    await expect(player.getByText("The team agreed on three retries. Who remembers why?")).toBeVisible({ timeout: 10_000 });
 
     // Keyboard: pause, seek, mute.
     await page.keyboard.press("k");
@@ -79,13 +79,16 @@ test.describe("the film", () => {
     const poster = page.getByRole("img", { name: /Title frame of the Briefnest film/ });
     await expect(poster).toBeVisible();
     expect(await poster.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
-    await expect(page.getByRole("link", { name: /Watch the Briefnest film, one minute/ })).toHaveAttribute("href", "/videos/briefnest-film-1080p.mp4");
+    await expect(page.getByRole("link", { name: /Watch the Briefnest film, one minute/ })).toHaveAttribute("href", "/videos/briefnest-film-1080p.mp4?v=0.2.0");
   });
 
   test("a phone keeps the poster and downloads no video until someone asks for the film", async ({ page, isMobile }) => {
     test.skip(!isMobile, "Phone-sized screens only.");
     const videoRequests: string[] = [];
-    page.on("request", (request) => request.url().endsWith(".mp4") && videoRequests.push(request.url()));
+    page.on("request", (request) => {
+      const path = new URL(request.url()).pathname;
+      if (path.endsWith(".mp4")) videoRequests.push(path);
+    });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(2500);
@@ -116,7 +119,10 @@ test.describe("the film", () => {
     const still = await browser.newContext({ reducedMotion: "reduce" });
     const quiet = await still.newPage();
     const videoRequests: string[] = [];
-    quiet.on("request", (request) => request.url().includes("/videos/") && request.url().endsWith(".mp4") && videoRequests.push(request.url()));
+    quiet.on("request", (request) => {
+      const path = new URL(request.url()).pathname;
+      if (path.endsWith(".mp4")) videoRequests.push(path);
+    });
     await quiet.goto("/");
     await quiet.waitForLoadState("networkidle");
     await quiet.waitForTimeout(2500);
@@ -277,7 +283,10 @@ test.describe("home page interactions", () => {
     await page.goto("/#tour");
     const tabs = page.getByRole("tablist", { name: "Product tour" });
     const panel = page.locator("#tour").getByRole("tabpanel");
-    await expect(tabs.getByRole("tab")).toHaveCount(8);
+    await expect(tabs.getByRole("tab")).toHaveCount(11);
+    await tabs.getByRole("tab", { name: "Mail", exact: true }).click();
+    await expect(panel.getByRole("img", { name: /Mira’s email confirms/ })).toBeVisible();
+    await tabs.getByRole("tab", { name: "Workspace", exact: true }).click();
     await expect(panel.getByRole("heading", { level: 3 })).toHaveText("Workspace overview");
 
     await tabs.getByRole("tab", { name: "Decisions" }).click();

@@ -107,7 +107,7 @@ test("ships robots.txt, a sitemap and a web manifest", async ({ page, request })
 test("the download page tells the truth about what can be downloaded", async ({ page }) => {
   await page.goto("/download");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Briefnest for Mac.");
-  await expect(page.getByText("0.1.0").first()).toBeVisible();
+  await expect(page.getByText("0.2.0", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("macOS 15 or later · Apple Silicon")).toBeVisible();
   await expect(page.getByText(/Pricing hasn’t been announced/)).toBeVisible();
 

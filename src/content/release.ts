@@ -16,10 +16,13 @@
  */
 import type { PublishedRelease } from "@/lib/release";
 
+export const releaseVersion = "0.2.0";
+export const releasesUrl = "https://github.com/pushpender-singh-ap/Briefnest-Web/releases";
+
 export const publishedRelease: PublishedRelease | null = {
-  url: "https://github.com/pushpender-singh-ap/Briefnest-Web/releases/download/v0.1.0/Briefnest-0.1.0-arm64.dmg",
-  expires: "2027-01-22T13:09:46Z",
-  sha256: "70c5830a98573627081185dacf34055379f22a5ebcb81335092de4b15aab4206",
-  sizeBytes: 64_337_832,
-  released: "2026-11-25",
+  url: `${releasesUrl}/download/v${releaseVersion}/Briefnest-${releaseVersion}-arm64.dmg`,
+  expires: "2026-12-25T17:15:19Z",
+  sha256: "b165cffacecc1f69f846cba4792f8d73cc8a342b5f8c38b6eb18d6223c4cb8af",
+  sizeBytes: 70_827_519,
+  released: "2026-11-26",
 };

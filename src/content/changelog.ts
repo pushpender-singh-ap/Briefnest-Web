@@ -15,8 +15,45 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "0.2.0",
+    date: "2026-11-26",
+    title: "From a meeting to the right ticket",
+    summary:
+      "A client confirms a Friday rollout by email. The team already has a Jira ticket for the work. Briefnest can find that ticket, draft a comment with the new date and show you the words behind it. You choose what gets posted.",
+    groups: [
+      {
+        title: "Jira, Multica and project email",
+        items: [
+          "Connect a Jira Cloud project or a Multica workspace. Browse assigned issues, read the discussion and open a linked ticket directly from a Briefnest action.",
+          "Choose mailboxes from Apple Mail or folders on an IMAP server for each workspace. Read conversations with their formatting and attachments, and ask questions alongside a message or ticket.",
+          "Meeting notes, relevant email and chat can propose new issues, comments, assignees, due dates and status changes. Briefnest checks existing tickets and their comments for work already covered. Edit, dismiss or apply each proposal.",
+          "Updates from connected tools can suggest progress on an action, a revised decision or an answer to an open question. Changes to your Briefnest records go through Review by default. AI proposals that write to a tracker always require approval.",
+        ],
+      },
+      {
+        title: "Chat, search and history",
+        items: [
+          "Ask what’s on your board, or name a ticket to bring its details and recent activity into Full Chat. See which sources each answer read and follow a citation back to the meeting, email or issue.",
+          "Chat can find passages by meaning as well as exact words. Apple’s on-device model is the default. Choose another local or cloud embedding model in History & Search, or enable optional English and Hinglish question expansion.",
+          "Choose individual files or a local SQLite database for AI history, with optional cleanup. Set model and reasoning preferences separately for chat and Quick Lookup.",
+        ],
+      },
+      {
+        title: "Privacy and connected agents",
+        items: [
+          "Choose which connectors AI can read and which trackers it can suggest changes to. Sensitive-data masking is on by default. Project email and connected code are read-only.",
+          "MCP agents can look up synced tickets, linked work and recent code activity. Mail access and asking the running Briefnest app for a cited answer have separate opt-ins. Test, repair or remove agent connections in Settings.",
+        ],
+      },
+    ],
+    limits: [
+      "Tracker suggestions depend on your account’s permissions. Quick Lookup does not query Jira or Multica.",
+      "Microsoft 365 work accounts that block IMAP app passwords can use mailboxes already set up in Apple Mail.",
+    ],
+  },
+  {
     version: "0.1.0",
-    date: "2026-11-20",
+    date: "2026-11-25",
     title: "The first build",
     summary:
       "Briefnest 0.1.0 is the first packaged build: a native macOS workspace that takes a meeting from recording to notes, decisions, action items and answers you can trace. On 20 November 2026 it was packaged as a Developer ID–signed, notarized disk image for Apple Silicon.",

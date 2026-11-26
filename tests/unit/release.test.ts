@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { publishedRelease } from "@/content/release";
+import { publishedRelease, releaseVersion } from "@/content/release";
 import { ConfigError, daysLeft, isExpired, isIndexable, resolveAvailability, resolveOrigin, withPublishedRelease, type PublishedRelease } from "@/lib/release";
 
 const NOW = new Date("2026-11-21T00:00:00Z");
@@ -135,12 +135,12 @@ describe("the published release", () => {
   it("as recorded in src/content/release.ts, is a complete and consistent description of one disk image", () => {
     if (!publishedRelease) return;
     // Resolved on the day it was published, so this keeps passing after the build expires.
-    const result = resolveAvailability(withPublishedRelease({}, publishedRelease), "0.1.0", new Date(`${publishedRelease.released}T12:00:00Z`));
+    const result = resolveAvailability(withPublishedRelease({}, publishedRelease), releaseVersion, new Date(`${publishedRelease.released}T12:00:00Z`));
     expect(result.kind).toBe("download");
     if (result.kind !== "download") return;
     // A release asset of the website's own repository on GitHub.
-    expect(result.release.url).toMatch(/^https:\/\/github\.com\/pushpender-singh-ap\/Briefnest-Web\/releases\/download\/v[\d.]+\/Briefnest-[\d.]+-arm64\.dmg$/);
-    expect(result.release.fileName).toMatch(/^Briefnest-[\d.]+-arm64\.dmg$/);
+    expect(result.release.fileName).toBe(`Briefnest-${releaseVersion}-arm64.dmg`);
+    expect(result.release.url).toBe(`https://github.com/pushpender-singh-ap/Briefnest-Web/releases/download/v${releaseVersion}/${result.release.fileName}`);
     expect(result.release.sha256).toMatch(/^[0-9a-f]{64}$/);
     expect(result.release.sizeBytes).toBeGreaterThan(10_000_000);
     expect(result.release.releasedOn).toBe(publishedRelease.released);

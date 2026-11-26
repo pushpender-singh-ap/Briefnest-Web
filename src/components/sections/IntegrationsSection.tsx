@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { integrations } from "@/content/home";
 
 /**
- * Section 9. Repositories in, and Briefnest out to the coding agent, over MCP.
+ * Connected trackers, project mail, repositories and coding agents.
  * Other products are named in plain text; no third-party logos are used.
  */
 export function IntegrationsSection() {
@@ -68,8 +68,8 @@ export function IntegrationsSection() {
 
         <div className="mt-16 grid gap-x-14 gap-y-12 lg:mt-24 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <Reveal className="lg:sticky lg:top-[calc(var(--header-h)+2.5rem)] lg:self-start">
-            <Plate caption="Settings / Connect agents">
-              <Picture id="agents" alt={integrations.images.agents} sizes="(min-width: 1024px) 520px, 92vw" />
+            <Plate caption="Review / Proposed comment on PAY-42">
+              <Picture id="ticket-proposal" alt={integrations.images.proposal} sizes="(min-width: 1024px) 520px, 92vw" />
             </Plate>
           </Reveal>
 

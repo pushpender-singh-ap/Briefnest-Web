@@ -18,9 +18,9 @@ export const hero = {
   eyebrow: "Native for macOS",
   /** Two lines on wide screens, one sentence per line on a phone. The last line ends on the italic turn. */
   headline: { lines: [["Your meetings.", "Your decisions."], ["Your work."]], turn: "Connected." },
-  body: "Capture conversations, turn them into actionable knowledge, and keep the context behind every decision — all in one native macOS workspace.",
+  body: "Turn meetings into notes and decisions you can trace. Bring in the email that confirmed a deadline and the Jira or Multica ticket where the work happens.",
   posterAlt:
-    "Title frame of the Briefnest film: the Aurora app icon beside the words “Meet Briefnest. From conversation to execution.”",
+    "Title frame of the Briefnest film: the Aurora app icon beside the words “Briefnest. Where conversations connect to the work.”, under the label “Version 0.2.0 / macOS”.",
 };
 
 export const problem = {
@@ -181,8 +181,8 @@ export const actions = {
     { title: "Due dates", text: "Deadlines are read the way people say them: “by Friday”, “end of week”, “tomorrow morning”." },
     { title: "Reminders", text: "Set a reminder, snooze an item, or let overdue and stale items surface on their own." },
     { title: "History", text: "Each change is logged with who made it: you, chat, an agent, a commit author or a meeting." },
-    { title: "Linked code activity", text: "Commits and pull requests that mention the work attach to the item." },
-    { title: "Suggested progress", text: "Later meetings and repository activity can suggest an update. You accept or dismiss it." },
+    { title: "Linked tickets and code", text: "Open a linked Jira or Multica issue from the action and see the commits and pull requests that mention the work." },
+    { title: "Suggested progress", text: "When a ticket closes or an email confirms a new date, Briefnest can suggest the change with its source in Review." },
   ],
   images: {
     detail: "The action Implement retry backoff: owner Asha, due Friday 27 November, a Thursday reminder and a Looks done suggestion citing merged PR #42.",
@@ -234,7 +234,7 @@ export const chat = {
   id: "ask",
   eyebrow: "Chat and project knowledge",
   headline: { lead: "Ask your project. Get answers", turn: "with context." } satisfies Headline,
-  body: "Ask in plain words. Briefnest answers from your saved meetings, decisions and code, and shows where each statement came from.",
+  body: "Ask why a decision changed or what is still open on your board. Full Chat can draw on meetings, issues, code and selected email, and show you the sources it read.",
   question: "Why did we change the retry limit?",
   answer: [
     { text: "After attempt three, recovery was rare. More attempts meant a longer wait for customers.", source: "S1" },
@@ -257,10 +257,10 @@ export const chat = {
   points: [
     { title: "Sources on every answer", text: "Open a source to see the exact transcript line, decision version or code link that was used." },
     { title: "Scoped to the workspace", text: "A chat searches its own workspace. Start one in All Workspaces to ask across projects." },
-    { title: "Changes need your approval", text: "Chat can propose marking an action done or revising a decision. It shows the change; you apply it." },
+    { title: "Follow up on a ticket", text: "Ask for a comment on an issue mentioned earlier in the conversation. You can edit the proposed wording before sending it." },
   ],
   limits:
-    "Answers depend on what you’ve saved and synced. Search is keyword-based, and when nothing matches Briefnest says so instead of guessing. A citation shows where a statement came from; check the excerpt for anything that matters.",
+    "Chat matches exact words and can also find passages with a similar meaning. Open a citation to check the wording, or choose the search model in History & Search.",
   images: {
     chat: "A Briefnest chat: the question “Why did we change the retry limit?” and a two-sentence answer marked S1 and S2, with a 2 sources button.",
     proposal: "A Proposed update card in chat: mark Implement retry backoff done, status Open to Done, with Dismiss and Apply buttons.",
@@ -270,10 +270,20 @@ export const chat = {
 
 export const integrations = {
   id: "developers",
-  eyebrow: "Developer integrations",
-  headline: { lead: "Your meetings and your code belong", turn: "in the same conversation." } satisfies Headline,
-  body: "Bring repository activity into the workspace, and let the coding agent you already use ask Briefnest what was decided.",
+  eyebrow: "Connected tools",
+  headline: { lead: "The meeting ends.", turn: "The ticket carries it forward." } satisfies Headline,
+  body: "Mira confirms Friday’s rollout by email. Asha already owns PAY-42. Briefnest finds the existing issue and drafts a comment for you to review.",
   groups: [
+    {
+      title: "Issue trackers",
+      names: ["Jira Cloud", "Multica"],
+      text: "Browse assigned issues alongside your meetings. Briefnest checks descriptions and comments before proposing a new ticket. Review the issue, assignee and wording before applying a change.",
+    },
+    {
+      title: "Project mail",
+      names: ["Apple Mail", "IMAP"],
+      text: "Choose the folders that belong to this workspace. Read a thread with its attachments, link it to an action or decision, and cite the message that confirmed a date. Mail access is read-only.",
+    },
     {
       title: "Repositories",
       names: ["GitHub", "GitLab", "Local Git folders"],
@@ -281,16 +291,16 @@ export const integrations = {
     },
     {
       title: "AI agents and models",
-      names: ["Claude Code", "Codex", "OpenCode", "Gemini CLI", "Cursor Agent", "Copilot CLI", "Ollama", "LM Studio"],
+      names: ["Claude Code", "Codex", "OpenCode", "Antigravity", "GLM Agent", "Muse Code", "Gemini CLI", "Cursor Agent", "Copilot CLI", "Ollama", "LM Studio"],
       text: "Notes and chat run through the agent you already have installed and signed in to, or a local model, or any OpenAI-compatible API. Switch providers from the sidebar.",
     },
     {
       title: "MCP-connected workflows",
       names: ["Claude Code", "Codex", "Cursor", "Antigravity", "Gemini CLI", "OpenCode", "VS Code"],
-      text: "Add Briefnest’s MCP server to your coding agent and ask it “what did we decide about retries?” from the terminal. Reading is off until you turn it on; letting agents update action items and decisions is a second, separate switch.",
+      text: "Let a coding agent look up decisions, tickets and code activity. Give it separate permission to read mail, ask Briefnest’s AI or update work items. Test or remove the connection in Settings.",
     },
   ],
-  tools: ["search", "list_meetings", "get_meeting", "list_decisions", "list_actions", "trace", "list_workspaces"],
+  tools: ["search", "list_meetings", "list_decisions", "list_actions", "get_issue", "code_activity", "trace"],
   exchange: {
     label: "Example exchange · illustration",
     prompt: "what did we decide about retries?",
@@ -304,7 +314,7 @@ export const integrations = {
   note: "What an agent reads goes to that agent’s AI provider. Connecting Briefnest doesn’t give any agent write access to your repositories.",
   images: {
     repository: "The Code page for the Inknest workspace: one repository, payments, with merged pull request #42 Implement retry backoff by Asha.",
-    agents: "The Connect agents sheet: switches for Let agents read Briefnest and Let agents update work, and a list of clients including Claude Code, Codex, Cursor, Gemini CLI, OpenCode and VS Code.",
+    proposal: "A proposed comment on PAY-42 quotes Mira’s Friday rollout email. Edit, Dismiss and Apply are available.",
   },
 };
 
@@ -341,7 +351,7 @@ export const privacy = {
       "Meeting audio, transcripts and speaker names",
       "Notes, decisions, action items and their history",
       "Screen snapshots (the images never leave)",
-      "Repository snapshots and the search index",
+      "Imported project mail, repository snapshots and the search index",
       "Keys and tokens, in the macOS Keychain",
     ],
   },
@@ -351,19 +361,21 @@ export const privacy = {
       { when: "AI notes and chat", what: "send the relevant text to the AI provider you selected." },
       { when: "Cloud transcription", what: "sends audio to the speech service, if you choose one." },
       { when: "Repository sync", what: "reads from GitHub or GitLab." },
+      { when: "Jira and Multica", what: "receive a proposed issue change when you apply it." },
+      { when: "Cloud search by meaning", what: "sends passages and questions to the embedding provider you choose." },
       { when: "A connected coding agent", what: "sends what it reads to its own provider." },
       { when: "Team sharing", what: "publishes only the items you pick, after a preview." },
     ],
   },
   localOnly:
-    "Prefer to keep everything local? Choose on-device transcription and a local model through Ollama or LM Studio, and leave agent access off. Then nothing leaves the Mac except repository sync, if you connect repositories.",
+    "For local processing, choose on-device transcription, local models for chat and search, and leave external connectors, agent access and publishing off.",
   capabilities: [
     "On-device transcription options",
-    "Workspace isolation",
+    "AI access by connector",
     "Local storage",
     "Reviewable AI changes",
     "Selective sharing",
-    "Source-backed answers",
+    "Sensitive-data masking",
   ],
   caveat:
     "Briefnest has no analytics or crash reporting. It stores its files for your macOS account without adding its own encryption, so use FileVault. What you send to an AI or speech provider is covered by that provider’s terms.",
@@ -447,6 +459,33 @@ export const tour = {
       image: "win-code",
       small: "m-code",
       alt: "The Code page showing the payments repository and merged pull request #42, Implement retry backoff.",
+    },
+    {
+      key: "jira",
+      label: "Jira",
+      title: "Jira",
+      text: "Browse the sprint and open PAY-42 to see Asha’s work on retry backoff.",
+      image: "jira",
+      small: "m-jira",
+      alt: "The PAY sprint includes PAY-42, Implement retry backoff, assigned to Asha and in progress.",
+    },
+    {
+      key: "multica",
+      label: "Multica",
+      title: "Multica",
+      text: "See which issues are open in Inknest QA and who owns the Friday rollout check.",
+      image: "multica",
+      small: "m-multica",
+      alt: "QA-8, Verify the Friday rollout, is assigned to Mira and in progress in Multica.",
+    },
+    {
+      key: "mail",
+      label: "Mail",
+      title: "Mail",
+      text: "Read Mira’s confirmation in the project mailbox and link the message to the work.",
+      image: "mail",
+      small: "m-mail",
+      alt: "Mira’s email confirms Friday’s rollout and asks Asha to cap payment retries at three.",
     },
     {
       key: "review",

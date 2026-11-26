@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { tour } from "@/content/home";
 import { Tour } from "./Tour";
 
-/** Section 12. Eight real windows: workspace, notes, transcript, actions, decisions, chat, code, review. */
+/** Tour of the app and its workspace connectors. */
 export function TourSection() {
   const shots = tour.items.map((item) => (
     <AppWindow key={item.key} title={`Briefnest · ${item.title}`} plainWhenSmall>

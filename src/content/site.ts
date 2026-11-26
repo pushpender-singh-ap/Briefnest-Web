@@ -8,7 +8,7 @@
  * .env.example. Everything else is checked against the Briefnest repository.
  */
 import { isIndexable, resolveAvailability, resolveOrigin, httpsUrl, withPublishedRelease } from "@/lib/release";
-import { publishedRelease } from "./release";
+import { publishedRelease, releaseVersion } from "./release";
 
 /**
  * The address the site is served at. Knowing it turns on canonical links, the sitemap, absolute social-preview
@@ -40,22 +40,22 @@ export const brand = {
   supporting: "From conversations to progress.",
   /** One sentence for search results and link previews. */
   description:
-    "Briefnest is a native macOS workspace that turns meetings into notes, decisions and action items, and keeps them connected to your code and project history.",
+    "Briefnest connects meeting notes, project email, Jira and Multica issues, and code on your Mac. Trace a decision to its source and review the next ticket update.",
   /** The longer value proposition. */
   proposition:
-    "Briefnest transforms meetings, decisions, notes and code context into connected project knowledge, so a team can see what happened, what matters and what needs to happen next.",
+    "Keep the meeting where a decision was made, the email that confirmed it and the ticket carrying it forward together in one project workspace.",
 } as const;
 
 /** Facts taken from the app itself (Config/Info.plist, docs/RELEASING.md). */
 export const product = {
   /** CFBundleShortVersionString. Override per release with NEXT_PUBLIC_RELEASE_VERSION. */
-  version: env.NEXT_PUBLIC_RELEASE_VERSION?.trim() || "0.1.0",
+  version: env.NEXT_PUBLIC_RELEASE_VERSION?.trim() || releaseVersion,
   /** LSMinimumSystemVersion 15.0 */
   minimumOSLong: "macOS 15 or later",
   /** LSArchitecturePriority arm64 */
   chip: "Apple Silicon",
   /** Needed for AI features; not bundled. */
-  aiPrerequisites: "Node.js 22 or later and a signed-in agent such as Claude Code or Codex",
+  aiPrerequisites: "Node.js 22 or later and a configured AI provider, such as Claude Code, Codex or a local model",
 } as const;
 
 export const deployment = {
@@ -121,31 +121,35 @@ export const footerNav: readonly { title: string; links: readonly NavItem[] }[] 
   },
 ];
 
+// These filenames are shared across releases. A new film needs its own browser cache entries,
+// including captions and poster, even when the download is overridden for a different build.
+const filmAsset = (name: string) => `/videos/${name}?v=0.2.0`;
+
 /**
  * The approved launch film. The masters stay in marketing/briefnest-product-video/dist; these are the web
  * derivatives that scripts/prepare-media.sh writes to public/videos. To serve them from a CDN, change the paths.
  */
 export const film = {
-  title: "Briefnest: from conversation to execution",
+  title: "Briefnest 0.2.0 · Where conversations connect to the work",
   description:
-    "The Briefnest launch film. One payment decision travels from a meeting to approved notes, an owned action, a merged pull request and a source-backed answer.",
+    "The Briefnest 0.2.0 launch film. Why payment retries stop at three: the answer spans a meeting, an email and a Jira ticket. Briefnest finds the existing issue, proposes a comment you review, and traces the answer back to the meeting.",
   durationSeconds: 60,
   /** Production date of the approved master. */
-  producedOn: "2026-11-20",
+  producedOn: "2026-11-26",
   posterImage: "film-poster",
-  posterFile: "/videos/briefnest-film-poster.jpg",
+  posterFile: filmAsset("briefnest-film-poster.jpg"),
   /** Tried in order; the browser plays the first it supports. */
   sources: [
-    { src: "/videos/briefnest-film-720p.mp4", type: "video/mp4", media: "(max-width: 767px)" },
-    { src: "/videos/briefnest-film-1080p.av1.mp4", type: 'video/mp4; codecs="av01.0.08M.08, mp4a.40.2"' },
-    { src: "/videos/briefnest-film-1080p.mp4", type: "video/mp4" },
+    { src: filmAsset("briefnest-film-720p.mp4"), type: "video/mp4", media: "(max-width: 767px)" },
+    { src: filmAsset("briefnest-film-1080p.av1.mp4"), type: 'video/mp4; codecs="av01.0.08M.08, mp4a.40.2"' },
+    { src: filmAsset("briefnest-film-1080p.mp4"), type: "video/mp4" },
   ],
   /** Silent copy for the hero's muted preview. */
   preview: [
-    { src: "/videos/briefnest-preview-720p.av1.mp4", type: 'video/mp4; codecs="av01.0.05M.08"' },
-    { src: "/videos/briefnest-preview-720p.mp4", type: "video/mp4" },
+    { src: filmAsset("briefnest-preview-720p.av1.mp4"), type: 'video/mp4; codecs="av01.0.05M.08"' },
+    { src: filmAsset("briefnest-preview-720p.mp4"), type: "video/mp4" },
   ],
-  captions: [{ src: "/videos/briefnest-film.en.vtt", srcLang: "en", label: "English" }],
+  captions: [{ src: filmAsset("briefnest-film.en.vtt"), srcLang: "en", label: "English" }],
 } as const;
 
 /** The one fictional example the whole site follows, the same one the film uses. */

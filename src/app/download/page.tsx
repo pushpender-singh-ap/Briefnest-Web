@@ -21,7 +21,7 @@ const requirements = [
   { icon: Laptop, title: product.minimumOSLong, text: "Built with SwiftUI for current macOS." },
   { icon: Cpu, title: product.chip, text: "M-series Macs. Intel Macs aren’t supported." },
   { icon: Package, title: "Direct download", text: "A signed, notarized disk image. Not on the Mac App Store." },
-  { icon: Terminal, title: "For AI features", text: `${product.aiPrerequisites}, a local model, or an OpenAI-compatible API.` },
+  { icon: Terminal, title: "For AI features", text: `${product.aiPrerequisites}.` },
 ];
 
 const steps = [

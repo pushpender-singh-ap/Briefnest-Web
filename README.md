@@ -41,7 +41,7 @@ The site needs no configuration: its address is recorded in `src/content/site.ts
 | `NEXT_PUBLIC_DOWNLOAD_EXPIRES` | Required with a download URL: the instant the build stops working, or `never`. The page shows it. |
 | `NEXT_PUBLIC_DOWNLOAD_CHANNEL` | `release`, `beta` or `time-limited`. Defaults from the expiry. |
 | `NEXT_PUBLIC_DOWNLOAD_SHA256`, `_SIZE_BYTES`, `_RELEASED` | Shown beside the button. |
-| `NEXT_PUBLIC_RELEASE_VERSION` | Version shown across the site. Defaults to `0.1.0`. |
+| `NEXT_PUBLIC_RELEASE_VERSION` | Version shown across the site. Defaults to `releaseVersion` in `src/content/release.ts`. |
 | `NEXT_PUBLIC_WAITLIST_ENDPOINT` | An HTTPS endpoint for early-access requests. Shows a form while there is no download. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Shown as a mailto link when there is no download and no form endpoint. |
 | `NEXT_PUBLIC_REPOSITORY_URL` | Adds a Source link to the footer. Leave unset while the repository is private. |
@@ -64,7 +64,7 @@ A wrong value stops the build with a message naming it. A download without an ex
 
 1. Build and notarize the DMG in the app repository (`scripts/build-production-dmg.sh`). Note the expiry it prints.
 2. Add it to a new GitHub Release of this repository, tagged `v<version>`. Don't commit a DMG.
-3. Put the release's details in `src/content/release.ts`: the asset's address, `expires`, `sha256` (`shasum -a 256 <file>`), `sizeBytes` (`stat -f %z <file>`) and the day it was published.
+3. Set `releaseVersion`, `expires`, `sha256` (`shasum -a 256 <file>`), `sizeBytes` (`stat -f %z <file>`) and the publication date in `src/content/release.ts`. The download URL uses the release version. Add the entry to `src/content/changelog.ts`.
 4. Run `npm run check`, then commit and push. The site rebuilds with the new download.
 
 The form posts JSON, `{ "email", "consent": true, "source": "briefnest-website" }`, and reports success only when the endpoint answers 2xx. Formspree, Basin, Getform or a small function of your own will accept that.
@@ -92,10 +92,10 @@ The approved launch film is `marketing/briefnest-product-video/dist/briefnest-la
 
 | File | For | Size |
 | --- | --- | --- |
-| `briefnest-film-1080p.av1.mp4` | The player, where AV1 can be decoded | 7.3 MB |
-| `briefnest-film-1080p.mp4` | The player, H.264 for everything else | 12.4 MB |
-| `briefnest-film-720p.mp4` | The player on phones | 5.1 MB |
-| `briefnest-preview-720p.av1.mp4`, `briefnest-preview-720p.mp4` | The hero's silent preview, no audio track | 2.1 MB each |
+| `briefnest-film-1080p.av1.mp4` | The player, where AV1 can be decoded | 6.8 MB |
+| `briefnest-film-1080p.mp4` | The player, H.264 for everything else | 11.9 MB |
+| `briefnest-film-720p.mp4` | The player on phones | 4.8 MB |
+| `briefnest-preview-720p.av1.mp4`, `briefnest-preview-720p.mp4` | The hero's silent preview, no audio track | 1.9 MB and 2.0 MB |
 | `briefnest-film.en.vtt` | English captions, converted from the film's SRT | 1 kB |
 | `briefnest-film-poster.jpg` | Poster, from the film's own thumbnail | 57 kB |
 
@@ -108,6 +108,8 @@ The film's 15-second vertical cut is a social asset and isn't used on the site.
 ### Screenshots
 
 Every screenshot is the real app. `npm run captures` copies the Swift package to a temporary folder, swaps only that copy's entry point for `scripts/capture/Capture.swift`, seeds temporary stores with the same fictional Inknest project the film uses, renders the app's own SwiftUI views offscreen and exits. It doesn't touch the checkout, the installed app or its data, and nothing is sent anywhere. The captures land in `assets/captures`.
+
+The Jira, Multica, Mail and proposed-comment images in `assets/captures` come from the 0.2.0 film’s Inknest fixture in `marketing/briefnest-product-video/assets/ui-captures`. The site includes the four originals and their responsive crops.
 
 Four things on the homepage are typeset rather than captured: the scattered-to-connected diagram, the action "review step" sketch, the answer-and-sources panel, and the example exchange with a coding agent. The last three say so on the page, and each sits beside the real screen it restates. The window title bar with its three controls is drawn by the site; everything below it is the app.
 
@@ -128,7 +130,7 @@ Tokens are in `src/app/globals.css`, in the `@theme` block, and become Tailwind 
 
 ## Tests and measurements
 
-- **Unit**, 149 tests: release and availability rules, the published release's record, formatting, content integrity, the same headers for Cloudflare and Vercel, Range header parsing, the list of video lengths, the early-access form, the download panel, the film player, the source explorer.
+- **Unit**, 156 tests covering release and availability rules, the published release's record, formatting, content integrity, headers, range handling, video lengths, the early-access form, the download panel, the film player and the source explorer.
 - **Browser**, 132 checks across desktop Chrome, desktop Safari (WebKit) and mobile Safari, against the build served by Cloudflare's runtime on this machine: every page loads without console errors or failed requests; every internal link resolves; a missing page or file gets the not-found page; the film opens, really plays, shows captions, responds to the keyboard and closes; each video is sent in exact parts, compared byte for byte with the file; the mobile menu; tabs, tour, accordion and switches by click, key and swipe; no horizontal scrolling at 375, 768, 1024, 1440 and 1920 px; axe finds no WCAG A or AA violations on any page; the first screen keeps its layout when web fonts replace their fallbacks.
 
 Lighthouse, measured on 21 November 2026 against the local production build with `NEXT_PUBLIC_SITE_URL` set, median of three runs:
@@ -152,7 +154,7 @@ Not tested: real phones and tablets, Firefox, and screen readers with a person l
 
 ## Deploy
 
-Nothing is deployed. The repository is set up for Cloudflare Workers; Vercel and other static hosts still work.
+Pushing the website’s `main` branch triggers the Cloudflare Workers build for [ability.ninja](https://ability.ninja).
 
 ### Cloudflare Workers
 

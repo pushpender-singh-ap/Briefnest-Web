@@ -67,7 +67,7 @@
     ]
   },
   "film-poster": {
-    "base": "/img/film-poster.023deff1d3",
+    "base": "/img/film-poster.0c12ad9a8e",
     "width": 3840,
     "height": 2160,
     "widths": [
@@ -101,6 +101,19 @@
       256,
       384,
       512
+    ]
+  },
+  "jira": {
+    "base": "/img/jira.83ada3301b",
+    "width": 2080,
+    "height": 1140,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920
     ]
   },
   "m-actions": {
@@ -164,6 +177,37 @@
       940
     ]
   },
+  "m-jira": {
+    "base": "/img/m-jira.793ee464b9",
+    "width": 835,
+    "height": 675,
+    "widths": [
+      480,
+      640,
+      835
+    ]
+  },
+  "m-mail": {
+    "base": "/img/m-mail.b9d4cea791",
+    "width": 1360,
+    "height": 540,
+    "widths": [
+      480,
+      640,
+      960,
+      1280
+    ]
+  },
+  "m-multica": {
+    "base": "/img/m-multica.2683df22e4",
+    "width": 835,
+    "height": 560,
+    "widths": [
+      480,
+      640,
+      835
+    ]
+  },
   "m-notes": {
     "base": "/img/m-notes.7390e51c6b",
     "width": 940,
@@ -194,6 +238,20 @@
       940
     ]
   },
+  "mail": {
+    "base": "/img/mail.bc61750f08",
+    "width": 2160,
+    "height": 1080,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920,
+      2160
+    ]
+  },
   "menubar": {
     "base": "/img/menubar.d79b09b50a",
     "width": 752,
@@ -202,6 +260,19 @@
       480,
       640,
       752
+    ]
+  },
+  "multica": {
+    "base": "/img/multica.a3e792de7b",
+    "width": 2080,
+    "height": 1140,
+    "widths": [
+      480,
+      640,
+      960,
+      1280,
+      1600,
+      1920
     ]
   },
   "notes": {
@@ -305,6 +376,17 @@
       640,
       960,
       1280
+    ]
+  },
+  "ticket-proposal": {
+    "base": "/img/ticket-proposal.49c960d27c",
+    "width": 1140,
+    "height": 400,
+    "widths": [
+      480,
+      640,
+      960,
+      1140
     ]
   },
   "transcript": {

@@ -26,7 +26,7 @@ export const faqs: Faq[] = [
     question: "What is Briefnest?",
     answer: [
       "Briefnest is a native macOS app for meetings and project memory. It records or imports a meeting, transcribes it, and drafts notes with action items, decisions and open questions.",
-      "It keeps those connected to each other and to your repositories, so you can later ask what was decided and why, and see the sources behind the answer.",
+      "Connect the project’s repositories, Jira or Multica issues, and selected email folders. Ask what was decided and why, then open the meeting, message or ticket behind the answer.",
     ],
   },
   {
@@ -39,7 +39,7 @@ export const faqs: Faq[] = [
     question: "Does Briefnest work offline?",
     answer: [
       "Partly. Your archive is stored on your Mac, so browsing, editing and search work without a connection, and transcription can run on-device.",
-      "AI notes and chat need the AI provider you choose. That can be a local model through Ollama or LM Studio, or a cloud service reached through a tool such as Claude Code or Codex. Repository sync and team sharing need the network.",
+      "Notes and chat can use a local model through Ollama or LM Studio. Search by meaning uses Apple’s on-device model by default. Cloud models, remote tracker or repository updates, IMAP and team publishing need a connection.",
     ],
   },
   {
@@ -67,11 +67,19 @@ export const faqs: Faq[] = [
     ],
   },
   {
+    id: "tickets-and-mail",
+    question: "What can Briefnest change in Jira, Multica or my mailbox?",
+    answer: [
+      "In a connected tracker, meetings, email or chat can suggest an issue, comment, due date, assignee or status. Briefnest checks for existing work. You can edit or dismiss a proposal, and only Apply sends it to Jira or Multica.",
+      "Mail access is read-only and limited to folders you choose for that workspace. Briefnest cannot send a reply, move a message or mark it as read on the server. You choose whether AI and connected agents may read mail.",
+    ],
+  },
+  {
     id: "review-ai-changes",
     question: "Can I review AI-generated changes?",
     answer: [
-      "Yes, and that is the default. Notes arrive as a draft, decisions as proposals, and anything chat wants to change appears as a card showing what would change. Nothing is saved until you approve it.",
-      "If you prefer, you can turn on auto-approve for meeting notes.",
+      "Yes. Notes arrive as drafts, decisions as proposals, and chat shows the fields it proposes to change. Review each suggestion and its sources before you apply it.",
+      "You can enable automatic approval for notes or for updates to Briefnest records from an individual connector. AI proposals that write to Jira or Multica always need your approval.",
     ],
   },
   {

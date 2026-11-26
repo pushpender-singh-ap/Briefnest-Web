@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SourceExplorer } from "@/components/sections/SourceExplorer";
 import { FilmPlayer } from "@/components/video/FilmPlayer";
+import { film } from "@/content/site";
 
 describe("answer sources", () => {
   it("opens the source a sentence points at and closes the other", async () => {
@@ -43,11 +44,11 @@ describe("film player", () => {
   it("offers the film in the configured order, with English captions", () => {
     const { container } = render(<FilmPlayer />);
     const sources = [...container.querySelectorAll("video source")].map((source) => source.getAttribute("src"));
-    expect(sources).toEqual(["/videos/briefnest-film-720p.mp4", "/videos/briefnest-film-1080p.av1.mp4", "/videos/briefnest-film-1080p.mp4"]);
+    expect(sources).toEqual(film.sources.map((source) => source.src));
     expect(container.querySelector("video source")).toHaveAttribute("media", "(max-width: 767px)");
     expect(container.querySelector("track")).toHaveAttribute("srclang", "en");
     expect(container.querySelector("video")).not.toHaveAttribute("autoplay");
-    expect(container.querySelector("video")).toHaveAttribute("poster", "/videos/briefnest-film-poster.jpg");
+    expect(container.querySelector("video")).toHaveAttribute("poster", film.posterFile);
   });
 
   it("plays and pauses from the keyboard and reflects the video's own events", async () => {
@@ -88,6 +89,6 @@ describe("film player", () => {
     fireEvent.error(container.querySelector("video")!);
     const alert = screen.getByRole("alert");
     expect(alert).toHaveTextContent("The film didn’t load.");
-    expect(within(alert).getByRole("link", { name: "Open the video file" })).toHaveAttribute("href", "/videos/briefnest-film-1080p.mp4");
+    expect(within(alert).getByRole("link", { name: "Open the video file" })).toHaveAttribute("href", film.sources.at(-1)!.src);
   });
 });
